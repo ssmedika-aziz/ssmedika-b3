@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Presentasi Limbah B3 Rumah Sakit SS Medika - By Aziz Munandar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<!-- ============================================================
+     STYLE
+     ============================================================ -->
+<style>
+:root{--ink:#17131f;--paper:#fff8ed;--white:#fffdf8;--muted:#625a69;--violet:#8b5cf6;--pink:#ec4899;--amber:#f59e0b;--mint:#34d399;--border:3px solid var(--ink);--shadow-sm:6px 6px 0 var(--ink);--shadow:10px 10px 0 var(--ink);--shadow-lg:14px 14px 0 var(--ink);--radius:26px}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden;background:radial-gradient(circle at 12% 18%,rgba(139,92,246,.24),transparent 28%),radial-gradient(circle at 88% 82%,rgba(52,211,153,.20),transparent 30%),#130f1a;font-family:"Space Grotesk",system-ui,sans-serif;color:var(--ink)}
+.frame{width:100%;height:100%;display:grid;place-items:center;padding:1.1vmin}
+.stage{position:relative;width:min(100vw,calc(100vh*16/9));aspect-ratio:16/9;overflow:hidden;border:4px solid var(--ink);border-radius:30px;background:var(--paper);box-shadow:24px 24px 0 rgba(0,0,0,.32)}
+.canvas{position:absolute;left:0;top:0;width:1600px;height:900px;transform-origin:top left;--mx:0;--my:0}
+.paper{position:absolute;inset:0;background-image:radial-gradient(circle,rgba(23,19,31,.075) 1.1px,transparent 1.1px),linear-gradient(135deg,rgba(139,92,246,.055),transparent 38%,rgba(52,211,153,.065));background-size:24px 24px,cover}
+.scene{position:absolute;inset:-180px;pointer-events:none;z-index:1}
+.layer{position:absolute;inset:0;will-change:transform}
+.layer.back{transform:translate3d(calc(var(--mx)*-72px),calc(var(--my)*-46px),0) scale(1.045)}
+.layer.mid{transform:translate3d(calc(var(--mx)*42px),calc(var(--my)*28px),0) rotate(calc(var(--mx)*.75deg)) scale(1.015)}
+.layer.front{transform:translate3d(calc(var(--mx)*92px),calc(var(--my)*58px),0) rotate(calc(var(--mx)*-.45deg))}
+.shape{position:absolute;border:var(--border);box-shadow:var(--shadow)}
+.circle{border-radius:50%}.square{border-radius:26px}.pill{border-radius:999px}
+.overlay{position:absolute;inset:0;pointer-events:none;z-index:45}
+.vignette{position:absolute;inset:0;box-shadow:inset 0 0 170px rgba(23,19,31,.20),inset 0 0 60px rgba(23,19,31,.10)}
+.sweep-wrap{position:absolute;inset:-30%;transform:translate3d(calc(var(--mx)*-1.6%),calc(var(--my)*-1%),0);opacity:.18;mix-blend-mode:screen}
+.sweep{width:100%;height:100%;background:linear-gradient(115deg,transparent 0 39%,rgba(255,255,255,.28) 46%,transparent 53% 100%);animation:sweepMove 18s linear infinite}
+.grain{position:absolute;inset:0;opacity:.035;background-image:radial-gradient(circle,#17131f 1px,transparent 1px);background-size:3px 3px;animation:grainMove .45s steps(2) infinite}
+@keyframes sweepMove{from{transform:translate3d(-26%,0,0) rotate(8deg)}to{transform:translate3d(26%,0,0) rotate(8deg)}}
+@keyframes grainMove{0%{transform:translate(0,0)}25%{transform:translate(-1px,1px)}50%{transform:translate(1px,-1px)}75%{transform:translate(-1px,-1px)}100%{transform:translate(1px,1px)}}
+.topbar{position:absolute;z-index:50;left:0;right:0;top:0;height:70px;display:flex;align-items:center;gap:18px;padding:0 28px;border-bottom:var(--border);background:rgba(255,248,237,.9);backdrop-filter:blur(12px)}
+.brand{display:flex;align-items:center;gap:12px;font-family:"Fredoka",sans-serif;font-weight:700;font-size:21px;white-space:nowrap}
+.brand-badge{width:44px;height:44px;border:var(--border);border-radius:16px;background:var(--violet);box-shadow:var(--shadow-sm);display:grid;place-items:center;color:#fff;font-size:22px}
+.progress{flex:1;height:18px;border:var(--border);border-radius:999px;background:#fff;box-shadow:5px 5px 0 var(--ink);overflow:hidden;min-width:120px}
+#bar{width:0%;height:100%;background:repeating-linear-gradient(90deg,var(--pink) 0 16px,var(--amber) 16px 32px,var(--mint) 32px 48px,var(--violet) 48px 64px);transition:width .45s ease}
+.nav-btn,.icon-btn{width:44px;height:44px;border:var(--border);border-radius:15px;background:#fff;box-shadow:var(--shadow-sm);display:grid;place-items:center;cursor:pointer;font-family:"Fredoka",sans-serif;font-size:19px;font-weight:700;transition:transform .16s ease,box-shadow .16s ease;color:var(--ink)}
+.nav-btn:hover,.icon-btn:hover{transform:translate(-2px,-2px);box-shadow:8px 8px 0 var(--ink)}
+.nav-btn:active,.icon-btn:active{transform:translate(4px,4px);box-shadow:2px 2px 0 var(--ink)}
+.counter{min-width:88px;text-align:center;font-family:"Fredoka",sans-serif;font-weight:700;font-size:16px;border:var(--border);border-radius:999px;padding:8px 12px;background:var(--mint);box-shadow:5px 5px 0 var(--ink)}
+.deck{position:absolute;inset:70px 0 0 0;z-index:30;perspective:1800px}
+.slide{position:absolute;inset:0;padding:30px 54px 42px;opacity:0;visibility:hidden;pointer-events:none;transform:translate3d(var(--tx,56px),18px,0) scale(.985);filter:blur(3px);transition:opacity .55s ease,transform .78s cubic-bezier(.2,.8,.2,1),filter .55s ease,visibility .55s ease;overflow:hidden}
+.slide.active{opacity:1;visibility:visible;pointer-events:auto;transform:none;filter:none}
+.slide-inner{height:100%;display:flex;flex-direction:column;gap:14px;transform-style:preserve-3d;transform:translate3d(calc(var(--mx)*12px),calc(var(--my)*8px),0) rotateY(calc(var(--mx)*.28deg)) rotateX(calc(var(--my)*-.18deg));will-change:transform}
+.slide-head{flex:0 0 auto;display:flex;justify-content:space-between;align-items:end;gap:24px}
+.slide-head p{max-width:390px;font-size:15px;color:var(--muted);margin:0;line-height:1.45}
+.body{flex:1 1 auto;min-height:0;display:grid;gap:14px}
+.body.stack{grid-template-rows:minmax(0,1fr) auto}
+.body.closing{grid-template-rows:minmax(0,1fr) auto auto}
+.body.rows-photo{grid-template-rows:minmax(0,1.25fr) minmax(0,.75fr)}
+.body.hero,.body.split{grid-template-columns:.98fr 1.02fr;align-items:center}
+.body.check-layout{grid-template-columns:1.12fr .88fr;align-items:center}
+.grid{display:grid;gap:14px;min-height:0}
+.grid.fill{height:100%;grid-auto-rows:minmax(0,1fr)}
+.grid-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.grid-3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.grid-4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.kicker{display:inline-block;font-family:"Fredoka",sans-serif;font-size:14px;letter-spacing:.05em;text-transform:uppercase;padding:7px 12px;border:var(--border);border-radius:999px;background:var(--amber);box-shadow:5px 5px 0 var(--ink);margin-bottom:10px;width:fit-content}
+h1{margin:0 0 12px;font-family:"Fredoka",sans-serif;font-size:54px;line-height:.98;letter-spacing:-1.4px}
+h2{margin:0 0 10px;font-family:"Fredoka",sans-serif;font-size:36px;line-height:1.05;letter-spacing:-.8px}
+h3{margin:0 0 8px;font-family:"Fredoka",sans-serif;font-size:18px;line-height:1.18}
+p{margin:0;font-size:14.5px;line-height:1.48}
+.lead{font-size:17.5px;line-height:1.45;max-width:720px;color:#4b4355}
+.muted{color:var(--muted)}
+.hl{padding:0 .1em;border-radius:.22em;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+.hl-violet{background:rgba(139,92,246,.24)}.hl-pink{background:rgba(236,72,153,.20)}.hl-amber{background:rgba(245,158,11,.26)}.hl-mint{background:rgba(52,211,153,.26)}
+.cta-row{display:flex;flex-wrap:wrap;gap:12px;margin-top:14px}
+.btn{font-family:"Fredoka",sans-serif;font-size:16px;font-weight:600;border:var(--border);border-radius:999px;padding:11px 18px;background:#fff;box-shadow:7px 7px 0 var(--ink);cursor:pointer;transition:transform .16s ease,box-shadow .16s ease;color:var(--ink)}
+.btn:hover{transform:translate(-2px,-2px);box-shadow:9px 9px 0 var(--ink)}
+.btn:active{transform:translate(4px,4px);box-shadow:2px 2px 0 var(--ink)}
+.btn.primary{background:var(--mint)}.btn.violet{background:var(--violet);color:#fff}.btn.pink{background:var(--pink);color:#fff}.btn.amber{background:var(--amber)}
+.card{position:relative;background:var(--white);border:var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px 15px 15px;overflow:hidden;transition:transform .2s ease,box-shadow .2s ease;--accent:var(--violet);min-height:0;display:flex;flex-direction:column}
+.card:hover{transform:translate(-3px,-3px);box-shadow:13px 13px 0 var(--ink)}
+.card .top-accent{position:absolute;left:0;top:0;width:100%;height:9px;border-bottom:var(--border);background:var(--accent)}
+.card.violet{--accent:var(--violet)}.card.pink{--accent:var(--pink)}.card.amber{--accent:var(--amber)}.card.mint{--accent:var(--mint)}
+.icon{width:48px;height:48px;border:var(--border);border-radius:17px;background:var(--accent);box-shadow:var(--shadow-sm);display:grid;place-items:center;margin:10px 0 9px;font-size:23px;color:var(--ink);flex:0 0 auto}
+.icon-text{font-family:"Fredoka",sans-serif;font-size:20px;font-weight:700}
+.card p{font-size:13.5px;line-height:1.38;color:#5a5261;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
+.list{list-style:none;padding:0;margin:12px 0 0;display:grid;gap:9px;font-size:14.5px}
+.list li{position:relative;padding-left:31px;line-height:1.38;color:#4b4355}
+.list li::before{content:"✓";position:absolute;left:0;top:1px;width:21px;height:21px;border:3px solid var(--ink);border-radius:8px;background:var(--mint);box-shadow:3px 3px 0 var(--ink);display:grid;place-items:center;font-weight:900;font-size:12px}
+.note{padding:13px 15px;border:var(--border);border-radius:20px;background:rgba(245,158,11,.14);box-shadow:6px 6px 0 var(--ink);font-size:13.5px;line-height:1.42}
+.note strong{font-family:"Fredoka",sans-serif}
+.stat{text-align:center;justify-content:center;align-items:center}
+.num{display:block;font-family:"Fredoka",sans-serif;font-size:40px;line-height:1;font-weight:700;color:var(--accent);margin-bottom:8px;text-shadow:3px 3px 0 rgba(23,19,31,.10);font-variant-numeric:tabular-nums}
+.tile{position:relative;border:var(--border);border-radius:28px;box-shadow:var(--shadow-lg);overflow:hidden;background:var(--white);min-height:0}
+.tile.contain{background:linear-gradient(135deg,rgba(139,92,246,.08),rgba(52,211,153,.08)),var(--white)}
+.photo-parallax{position:absolute;inset:-6%;transform:translate3d(calc(var(--mx)*-18px),calc(var(--my)*-12px),0);will-change:transform}
+.photo-zoom{width:100%;height:100%;overflow:hidden;animation:kenburns 22s ease-in-out infinite alternate}
+.tile img{width:100%;height:100%;object-fit:cover;display:block}
+.tile.contain img{object-fit:contain}
+@keyframes kenburns{from{transform:scale(1.03) translate3d(0,0,0)}to{transform:scale(1.12) translate3d(-1.4%,1%,0)}}
+.tile-label{position:absolute;left:16px;right:16px;bottom:16px;padding:10px 12px;border:3px solid var(--ink);border-radius:18px;background:rgba(255,253,248,.94);box-shadow:5px 5px 0 var(--ink);font-family:"Fredoka",sans-serif;font-size:15px;font-weight:700;line-height:1.2;transform:translate3d(calc(var(--mx)*8px),calc(var(--my)*5px),0);backdrop-filter:blur(8px)}
+.tile-label small{display:block;margin-top:4px;font-family:"Space Grotesk",sans-serif;font-size:11.5px;font-weight:500;color:var(--muted)}
+.sticker{position:absolute;top:-12px;left:34px;z-index:2;padding:8px 14px;border:3px solid var(--ink);background:var(--amber);box-shadow:5px 5px 0 var(--ink);font-family:"Fredoka",sans-serif;font-size:14px;font-weight:700;transform:rotate(-7deg)}
+.hero-media{position:relative;height:100%;display:grid;place-items:center}
+.hero-tile{width:100%;height:100%;min-height:520px}
+.chip{position:absolute;z-index:3;display:flex;align-items:center;gap:8px;padding:9px 13px;border:var(--border);border-radius:999px;background:var(--white);box-shadow:7px 7px 0 var(--ink);font-family:"Fredoka",sans-serif;font-size:14px;font-weight:700;white-space:nowrap;transform:translate3d(calc(var(--mx)*var(--cx,20px)),calc(var(--my)*var(--cy,14px)),0);--accent:var(--violet)}
+.chip .dot{width:13px;height:13px;border:3px solid var(--ink);border-radius:50%;background:var(--accent)}
+.quiz{margin-top:12px;padding:14px;border:var(--border);border-radius:var(--radius);background:var(--white);box-shadow:var(--shadow)}
+.quiz-title{font-family:"Fredoka",sans-serif;font-size:20px;font-weight:700;margin-bottom:10px}
+.choices{display:grid;gap:8px}
+.choice{display:flex;align-items:center;gap:10px;width:100%;padding:8px 10px;border:var(--border);border-radius:16px;background:#fff;box-shadow:5px 5px 0 var(--ink);cursor:pointer;font-size:13.5px;font-weight:600;text-align:left;color:var(--ink);transition:transform .16s ease,box-shadow .16s ease,background .2s ease}
+.choice:hover{transform:translate(-2px,-2px);box-shadow:7px 7px 0 var(--ink)}
+.choice:disabled{cursor:default;opacity:.96}
+.choice.correct{background:rgba(52,211,153,.22)}.choice.wrong{background:rgba(236,72,153,.18)}
+.mark{width:29px;height:29px;border:var(--border);border-radius:10px;background:var(--amber);box-shadow:3px 3px 0 var(--ink);display:grid;place-items:center;font-family:"Fredoka",sans-serif;font-weight:700;flex:0 0 auto}
+.feedback{display:none;margin-top:10px;padding:10px 12px;border:var(--border);border-radius:16px;background:var(--paper);box-shadow:5px 5px 0 var(--ink);font-size:12.5px;line-height:1.42}
+.feedback.show{display:block;animation:popIn .35s ease}
+.feedback.good{border-left:8px solid var(--mint)}.feedback.bad{border-left:8px solid var(--pink)}
+.checks{display:grid;gap:8px;min-height:0;overflow:hidden}
+.check{display:flex;gap:10px;align-items:flex-start;padding:7px 9px;border:var(--border);border-radius:14px;background:var(--white);box-shadow:5px 5px 0 var(--ink);font-size:13px;line-height:1.32;cursor:pointer;transition:transform .16s ease,box-shadow .16s ease}
+.check:hover{transform:translate(-2px,-2px);box-shadow:7px 7px 0 var(--ink)}
+.check input{width:17px;height:17px;margin-top:1px;accent-color:var(--mint);flex:0 0 auto}
+.check span{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.ring-card{text-align:center;justify-content:center;align-items:center}
+.ring-wrap{position:relative;width:205px;height:205px;margin:10px auto 0}
+.ring{width:205px;height:205px;transform:rotate(-90deg)}
+.ring-bg{fill:none;stroke:rgba(23,19,31,.13);stroke-width:12}
+.ring-fg{fill:none;stroke:url(#ringGrad);stroke-width:12;stroke-linecap:round;transition:stroke-dashoffset .55s ease}
+.ring-center{position:absolute;inset:0;display:grid;place-items:center;text-align:center}
+#ringText{font-family:"Fredoka",sans-serif;font-size:35px;font-weight:700;color:var(--mint);line-height:1}
+.final-row{display:grid;grid-template-columns:.9fr 1.1fr;gap:24px;align-items:center}
+.thanks{font-family:"Fredoka",sans-serif;font-size:46px;line-height:1;margin:0}
+.toast{position:absolute;left:50%;bottom:24px;transform:translate(-50%,18px);z-index:70;padding:12px 18px;border:var(--border);border-radius:999px;background:var(--ink);color:var(--paper);box-shadow:8px 8px 0 rgba(0,0,0,.20);font-size:14.5px;line-height:1.35;opacity:0;pointer-events:none;transition:.3s ease;max-width:900px;text-align:center}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.hint{position:absolute;left:28px;bottom:16px;z-index:55;font-size:13px;color:#6b6375}
+.dots{position:absolute;right:28px;bottom:18px;display:flex;gap:7px;z-index:55;flex-wrap:wrap;max-width:560px;justify-content:flex-end}
+.dot-btn{width:12px;height:12px;border:3px solid var(--ink);border-radius:50%;background:#fff;cursor:pointer;box-shadow:3px 3px 0 var(--ink);padding:0;transition:transform .16s ease,background .2s ease}
+.dot-btn.active{background:var(--pink);transform:scale(1.18)}
+.confetti{position:absolute;top:-40px;width:14px;height:20px;border:3px solid var(--ink);border-radius:5px;box-shadow:4px 4px 0 rgba(0,0,0,.16);z-index:80;pointer-events:none;animation:fall linear forwards}
+@keyframes popIn{from{opacity:0;transform:translateY(8px) scale(.98)}to{opacity:1;transform:none}}
+@keyframes fall{to{transform:translateY(980px) rotate(720deg);opacity:0}}
+@keyframes rise{from{opacity:0;transform:translateY(14px) scale(.985)}to{opacity:1;transform:none}}
+.slide.active .stagger>*{animation:rise .62s cubic-bezier(.2,.8,.2,1) both}
+.slide.active .stagger>*:nth-child(1){animation-delay:.04s}.slide.active .stagger>*:nth-child(2){animation-delay:.08s}.slide.active .stagger>*:nth-child(3){animation-delay:.12s}.slide.active .stagger>*:nth-child(4){animation-delay:.16s}.slide.active .stagger>*:nth-child(5){animation-delay:.20s}.slide.active .stagger>*:nth-child(6){animation-delay:.24s}.slide.active .stagger>*:nth-child(7){animation-delay:.28s}.slide.active .stagger>*:nth-child(8){animation-delay:.32s}
+
+/* ---- SLIDE 10: WADAH + PRESENTER ---- */
+.wadah-slide .body{grid-template-rows:minmax(0,1fr) auto}
+.wadah-board{min-height:0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px}
+.wadah-card{position:relative;min-width:0;min-height:0;display:flex;flex-direction:column;background:var(--white);border:var(--border);border-radius:24px;box-shadow:var(--shadow);padding:22px 13px 13px;overflow:hidden;transition:transform .2s ease,box-shadow .2s ease}
+.wadah-card:hover{transform:translate(-3px,-3px);box-shadow:13px 13px 0 var(--ink)}
+.wadah-card::before{content:"";position:absolute;left:0;top:0;width:100%;height:9px;border-bottom:var(--border);background:var(--accent)}
+.wadah-card.kuning{--accent:#facc15;--soft:rgba(250,204,21,.20)}.wadah-card.merah{--accent:#ef4444;--soft:rgba(239,68,68,.16)}.wadah-card.ungu{--accent:#a855f7;--soft:rgba(168,85,247,.16)}.wadah-card.coklat{--accent:#92400e;--soft:rgba(146,64,14,.14)}.wadah-card.sharp{--accent:#f59e0b;--soft:rgba(245,158,11,.18)}
+.wadah-art{height:124px;margin-bottom:10px;border:3px solid rgba(23,19,31,.12);border-radius:18px;background:var(--soft);display:flex;align-items:flex-end;justify-content:center;gap:10px;padding:12px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.35);flex:0 0 auto}
+.bag,.bin,.safety{position:relative;border:3px solid var(--ink);box-shadow:4px 4px 0 var(--ink);flex:0 0 auto}
+.bag{width:48px;height:70px;border-radius:14px 14px 11px 11px;background:var(--accent)}
+.bag::before{content:"";position:absolute;top:-12px;left:9px;width:28px;height:16px;border:3px solid var(--ink);border-bottom:0;border-radius:14px 14px 0 0;background:var(--accent)}
+.bag::after{content:"";position:absolute;top:-2px;left:14px;width:18px;height:7px;border:3px solid var(--ink);border-radius:999px;background:rgba(255,255,255,.55)}
+.bin{width:56px;height:66px;border-radius:8px;background:var(--accent)}
+.bin::before{content:"";position:absolute;top:-13px;left:-6px;width:68px;height:15px;border:3px solid var(--ink);border-radius:8px;background:var(--accent)}
+.bin::after{content:"";position:absolute;top:16px;left:12px;width:32px;height:4px;border-radius:999px;background:rgba(23,19,31,.20);box-shadow:0 13px 0 rgba(23,19,31,.20),0 26px 0 rgba(23,19,31,.20)}
+.safety{width:84px;height:66px;border-radius:10px;background:#fde047}
+.safety::before{content:"";position:absolute;top:-15px;left:22px;width:38px;height:15px;border:3px solid var(--ink);border-bottom:0;border-radius:10px 10px 0 0;background:#fde047}
+.safety::after{content:"SAFETY BOX";position:absolute;left:7px;bottom:6px;font-family:"Fredoka",sans-serif;font-size:8.5px;font-weight:700;letter-spacing:.02em;color:var(--ink)}
+.art-icon{position:absolute;inset:0;display:grid;place-items:center;font-size:22px;line-height:1;filter:drop-shadow(2px 2px 0 rgba(23,19,31,.20));pointer-events:none}
+.safety .art-icon{inset:7px 0 15px;font-size:21px}
+.sharp-tools{display:grid;gap:7px;font-size:21px;filter:drop-shadow(2px 2px 0 rgba(23,19,31,.18))}
+.wadah-card h3{margin:0;font-family:"Fredoka",sans-serif;font-size:20px;line-height:1;letter-spacing:-.4px}
+.wadah-sub{margin-top:5px;font-family:"Fredoka",sans-serif;font-size:12px;font-weight:700;line-height:1.22;color:var(--ink)}
+.wadah-list{margin:8px 0 0;padding:0;list-style:none;display:grid;gap:4px;font-size:12px;line-height:1.26;color:#5a5261}
+.wadah-list li{position:relative;padding-left:13px}
+.wadah-list li::before{content:"•";position:absolute;left:1px;color:var(--accent);font-weight:900}
+.wadah-tag{margin-top:auto;align-self:flex-start;padding:5px 8px;border:3px solid var(--ink);border-radius:999px;background:var(--accent);box-shadow:3px 3px 0 var(--ink);font-family:"Fredoka",sans-serif;font-size:10px;font-weight:700;color:var(--ink);white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis}
+.wadah-card.merah .wadah-tag,.wadah-card.ungu .wadah-tag,.wadah-card.coklat .wadah-tag{color:#fff}
+.wadah-presenters{display:grid;grid-template-columns:250px minmax(0,1fr) 250px;align-items:end;gap:20px;min-height:0}
+.presenter{position:relative;width:250px;height:250px;align-self:end;overflow:hidden;will-change:transform;pointer-events:none}
+.presenter.left{transform:translate3d(calc(var(--mx)*-7px),0,0)}.presenter.right{transform:translate3d(calc(var(--mx)*7px),0,0)}
+.presenter img{display:block;width:100%;height:100%;object-fit:contain;object-position:bottom center;filter:drop-shadow(7px 8px 0 rgba(23,19,31,.82))}
+.presenter-note{align-self:end;margin-bottom:2px}
+
+/* ---- SLIDE 11 & 12: CALLAWAY APD ---- */
+.apd-body{grid-template-rows:minmax(0,1fr) auto}
+.apd-callaway{position:relative;min-height:0}
+.apd-lines{position:absolute;inset:0;width:100%;height:100%;z-index:3;pointer-events:none;overflow:visible}
+.apd-lines path{fill:none;stroke:var(--ink);stroke-width:2.5;stroke-linecap:round;vector-effect:non-scaling-stroke;stroke-dasharray:1;stroke-dashoffset:1;opacity:.92}
+.slide.active .apd-lines path{animation:drawLine .7s cubic-bezier(.2,.8,.2,1) forwards}
+.slide.active .apd-lines path:nth-of-type(1){animation-delay:.30s}.slide.active .apd-lines path:nth-of-type(2){animation-delay:.42s}.slide.active .apd-lines path:nth-of-type(3){animation-delay:.54s}.slide.active .apd-lines path:nth-of-type(4){animation-delay:.66s}.slide.active .apd-lines path:nth-of-type(5){animation-delay:.78s}.slide.active .apd-lines path:nth-of-type(6){animation-delay:.90s}
+@keyframes drawLine{to{stroke-dashoffset:0}}
+.apd-figure{position:absolute;top:-3%;bottom:-3%;left:50%;transform:translateX(-50%);width:auto;z-index:2;display:flex;align-items:flex-end;justify-content:center}
+.apd-figure-img{height:106%;width:auto;display:block;object-fit:contain;filter:drop-shadow(7px 8px 0 var(--ink)) drop-shadow(15px 17px 0 rgba(23,19,31,.20))}
+.apd-figure-glow{position:absolute;inset:-4% -16%;z-index:-1;background:radial-gradient(ellipse at 50% 38%,rgba(139,92,246,.20),transparent 60%),radial-gradient(ellipse at 50% 74%,rgba(52,211,153,.18),transparent 62%)}
+.apd-ground{position:absolute;left:50%;bottom:1%;transform:translateX(-50%);width:62%;height:30px;border-radius:50%;background:radial-gradient(ellipse,rgba(23,19,31,.34),transparent 70%);filter:blur(3px);z-index:-1}
+.apd-label{position:absolute;z-index:4;width:25%;display:grid;grid-template-columns:46px 1fr;align-items:start;gap:10px;background:var(--white);border:var(--border);border-radius:18px;box-shadow:var(--shadow);padding:9px 13px;--accent:var(--violet);transition:transform .2s ease,box-shadow .2s ease;transform:translateY(-50%)}
+.apd-label:hover{transform:translateY(-50%) translate(-2px,-2px);box-shadow:12px 12px 0 var(--ink)}
+.apd-label.left{left:0}.apd-label.right{right:0}
+.apd-num{width:46px;height:46px;border:var(--border);border-radius:14px;background:var(--accent);box-shadow:4px 4px 0 var(--ink);display:grid;place-items:center;font-family:"Fredoka",sans-serif;font-size:20px;font-weight:700;color:var(--ink);flex:0 0 auto}
+.apd-label.dark .apd-num{color:#fff}
+.apd-ltitle{display:flex;align-items:center;gap:7px;font-family:"Fredoka",sans-serif;font-size:15.5px;font-weight:700;line-height:1.1;margin:0 0 2px}
+.apd-ltitle .em{font-size:17px}
+.apd-ldesc{margin:0;font-size:12px;line-height:1.3;color:#5a5261}
+.apd-stub{position:absolute;top:50%;width:14px;height:14px;border:3px solid var(--ink);border-radius:50%;background:var(--accent);box-shadow:2px 2px 0 var(--ink)}
+.apd-label.left .apd-stub{right:-8px;transform:translateY(-50%)}.apd-label.right .apd-stub{left:-8px;transform:translateY(-50%)}
+.slide.active .apd-label{animation:rise .55s cubic-bezier(.2,.8,.2,1) both}
+.apd-footnote{background:rgba(52,211,153,.16)}.apd-footnote strong{color:#0f7a52}
+.apd-footnote.doff{background:rgba(236,72,153,.14)}.apd-footnote.doff strong{color:#b13a78}
+.apd-handle{position:absolute;z-index:30;width:14px;height:14px;border-radius:50%;border:2px solid var(--ink);background:var(--accent,#8b5cf6);box-shadow:0 0 0 2px rgba(255,255,255,.7),1px 1px 0 rgba(0,0,0,.25);transform:translate(-50%,-50%);display:none;cursor:grab;touch-action:none;opacity:.85;transition:transform .12s ease,opacity .12s ease}
+.apd-handle::after{content:"";position:absolute;inset:2px;border-radius:50%;background:rgba(255,255,255,.5)}
+.apd-callaway.calibrating .apd-handle{display:block}
+.apd-handle:hover{transform:translate(-50%,-50%) scale(1.25);opacity:1}
+.apd-callaway.dragging .apd-handle{cursor:grabbing;transform:translate(-50%,-50%) scale(1.15);opacity:1}
+.calib-controls{position:absolute;top:4px;right:4px;z-index:40;display:flex;gap:8px;align-items:center}
+.calib-btn{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border:var(--border);border-radius:999px;background:var(--white);box-shadow:4px 4px 0 var(--ink);font-family:"Fredoka",sans-serif;font-size:12.5px;font-weight:700;cursor:pointer;color:var(--ink);transition:transform .15s ease,box-shadow .15s ease,background .2s ease}
+.calib-btn:hover{transform:translate(-1px,-1px);box-shadow:5px 5px 0 var(--ink)}
+.calib-btn:active{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--ink)}
+.calib-btn.reset{display:none;background:var(--pink);color:#fff}
+.calib-hint{position:absolute;top:6px;left:50%;transform:translateX(-50%);z-index:40;display:none;padding:6px 14px;border:var(--border);border-radius:999px;background:var(--ink);color:var(--paper);box-shadow:4px 4px 0 rgba(0,0,0,.25);font-family:"Fredoka",sans-serif;font-size:12.5px;font-weight:700;white-space:nowrap;pointer-events:none}
+.apd-callaway.calibrating .calib-hint{display:block}
+.apd-callaway.calibrating .calib-btn.reset{display:inline-flex}
+.apd-callaway.calibrating .calib-btn.toggle{background:var(--mint)}
+
+/* ---- SLIDE 13,14,15 ---- */
+.spill-body{grid-template-columns:.92fr 1.08fr;align-items:stretch}
+.spill-left{display:flex;flex-direction:column;gap:12px;justify-content:center;min-height:0}
+.img-grid-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:minmax(0,1fr);gap:14px;height:100%;min-height:0}
+.step-grid-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-auto-rows:minmax(0,1fr);gap:14px;height:100%;min-height:0}
+.step-grid-2x3{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:minmax(0,1fr);gap:12px;height:100%;min-height:0}
+.step-card{position:relative;display:flex;flex-direction:column;background:var(--white);border:var(--border);border-radius:22px;box-shadow:var(--shadow);overflow:hidden;min-height:0;--accent:var(--violet);transition:transform .2s ease,box-shadow .2s ease}
+.step-card:hover{transform:translate(-3px,-3px);box-shadow:13px 13px 0 var(--ink)}
+.step-card .sc-img{position:relative;flex:1 1 auto;min-height:0;overflow:hidden;background:linear-gradient(135deg,rgba(139,92,246,.07),rgba(52,211,153,.07)),var(--paper)}
+.step-card .sc-img img{width:100%;height:100%;object-fit:contain;display:block}
+.step-card .sc-num{position:absolute;top:10px;left:10px;z-index:2;width:38px;height:38px;border:var(--border);border-radius:12px;background:var(--accent);box-shadow:4px 4px 0 var(--ink);display:grid;place-items:center;font-family:"Fredoka",sans-serif;font-weight:700;font-size:18px;color:var(--ink)}
+.step-card.dark .sc-num{color:#fff}
+.step-card .sc-cap{padding:10px 12px 12px;border-top:var(--border);background:var(--white)}
+.step-card .sc-cap h3{margin:0 0 3px;font-family:"Fredoka",sans-serif;font-size:15px;line-height:1.1}
+.step-card .sc-cap p{margin:0;font-size:12px;line-height:1.3;color:#5a5261;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.alur-body{grid-template-columns:.9fr 1.1fr;align-items:stretch}
+.video-tile{height:100%;background:#0e0b14}
+.video-tile video{width:100%;height:100%;object-fit:contain;display:block;background:#0e0b14}
+.video-sticker{top:-12px;left:auto;right:24px;background:var(--violet);color:#fff;transform:rotate(6deg)}
+.video-hint{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:2;padding:10px 16px;border:3px solid var(--ink);border-radius:999px;background:rgba(255,253,248,.92);box-shadow:5px 5px 0 var(--ink);font-family:"Fredoka",sans-serif;font-weight:700;font-size:14px;pointer-events:none;transition:opacity .3s ease}
+.video-tile.playing .video-hint{opacity:0}
+
+/* ---- SLIDE 1 EFEK JAWABAN ---- */
+.hero-tile.result-active .photo-zoom{animation:none}
+.hero-tile.result-active img{object-fit:contain;object-position:center bottom;padding:24px 28px 12px;filter:drop-shadow(8px 10px 0 rgba(23,19,31,.78))}
+.hero-tile.result-correct{box-shadow:14px 14px 0 var(--ink),0 0 0 6px rgba(52,211,153,.22)}
+.hero-tile.result-wrong{box-shadow:14px 14px 0 var(--ink),0 0 0 6px rgba(236,72,153,.20)}
+.hero-tile.result-active .sticker{background:var(--result-color,var(--amber));color:var(--ink)}
+.hero-tile.result-correct .sticker{background:var(--mint)}
+.hero-tile.result-wrong .sticker{background:var(--pink);color:#fff}
+.hero-tile.result-active .tile-label{background:rgba(255,253,248,.96)}
+
+/* ===== SLIDE INTRO: GIF SINEMATIKA (TRAILER REVEAL) ===== */
+.slide-intro{padding:0!important;background:#0a0810}
+.intro-stage{position:absolute;inset:0;overflow:hidden;background:#0a0810}
+.intro-gif{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transform:scale(1.18);filter:saturate(1.06) contrast(1.04) brightness(.96)}
+.intro-dim{position:absolute;inset:0;opacity:0;background:radial-gradient(ellipse at 50% 44%,rgba(10,8,16,.06),rgba(10,8,16,.60) 80%),linear-gradient(180deg,rgba(10,8,16,.55) 0%,rgba(10,8,16,0) 24%,rgba(10,8,16,0) 60%,rgba(10,8,16,.74) 100%)}
+.intro-bars{position:absolute;inset:0;z-index:6;pointer-events:none}
+.intro-bar{position:absolute;left:0;right:0;height:50%;background:#0a0810}
+.intro-bar.top{top:0;border-bottom:3px solid rgba(255,255,255,.10)}
+.intro-bar.bot{bottom:0;border-top:3px solid rgba(255,255,255,.10)}
+.intro-content{position:absolute;inset:0;z-index:8;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;padding:0 92px}
+.intro-kicker{display:inline-flex;align-items:center;gap:10px;font-family:"Fredoka",sans-serif;font-weight:700;font-size:16px;letter-spacing:.14em;text-transform:uppercase;color:#fff;background:rgba(236,72,153,.18);border:2px solid rgba(255,255,255,.30);border-radius:999px;padding:8px 16px;margin-bottom:22px;opacity:0;transform:translateY(14px);backdrop-filter:blur(6px)}
+.intro-kicker .live{width:11px;height:11px;border-radius:50%;background:var(--mint);box-shadow:0 0 0 0 rgba(52,211,153,.7);animation:recPulse 1.6s infinite}
+.intro-title{margin:0;font-family:"Fredoka",sans-serif;font-weight:700;font-size:96px;line-height:.92;letter-spacing:-2.4px;color:#fff;text-shadow:0 8px 24px rgba(0,0,0,.45)}
+.intro-title .ln{display:block;overflow:hidden;padding-bottom:.04em}
+.intro-title .ln > i{display:block;font-style:normal;transform:translateY(115%)}
+.intro-title .ln .accent{color:var(--mint)}
+.intro-tag{margin:24px 0 0;font-size:21px;line-height:1.4;max-width:760px;color:rgba(255,255,255,.86);opacity:0;transform:translateY(14px)}
+.intro-tag b{color:#fff}
+.intro-progress{margin-top:34px;width:420px;max-width:60%;height:8px;border-radius:999px;background:rgba(255,255,255,.16);overflow:hidden;opacity:0}
+.intro-progress > span{display:block;height:100%;width:0;border-radius:999px;background:linear-gradient(90deg,var(--pink),var(--amber),var(--mint))}
+.intro-cta{margin-top:30px;display:flex;gap:14px;align-items:center;opacity:0;transform:translateY(14px)}
+.intro-cta .btn{background:#fff}
+.intro-cta .btn.ghost{background:transparent;color:#fff;border-color:rgba(255,255,255,.5);box-shadow:none}
+.intro-cta .btn.ghost:hover{background:rgba(255,255,255,.12);box-shadow:none;transform:none}
+.rec{position:absolute;top:22px;left:30px;z-index:9;display:flex;align-items:center;gap:10px;font-family:"Fredoka",sans-serif;font-weight:700;font-size:15px;letter-spacing:.12em;color:#fff;opacity:0}
+.rec .rdot{width:13px;height:13px;border-radius:50%;background:#ef4444;box-shadow:0 0 0 0 rgba(239,68,68,.7);animation:recPulse 1.3s infinite}
+.timecode{position:absolute;top:20px;right:30px;z-index:9;font-family:"Space Grotesk",monospace;font-weight:700;font-size:16px;letter-spacing:.14em;color:#fff;background:rgba(10,8,16,.55);border:2px solid rgba(255,255,255,.22);border-radius:10px;padding:6px 12px;opacity:0;font-variant-numeric:tabular-nums;backdrop-filter:blur(6px)}
+.skip{position:absolute;bottom:22px;right:30px;z-index:9;display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border:2px solid rgba(255,255,255,.4);border-radius:999px;background:rgba(10,8,16,.45);color:#fff;font-family:"Fredoka",sans-serif;font-weight:700;font-size:13px;cursor:pointer;opacity:0;backdrop-filter:blur(6px);transition:background .2s ease,transform .15s ease}
+.skip:hover{background:rgba(10,8,16,.7);transform:translateY(-1px)}
+@keyframes recPulse{0%{box-shadow:0 0 0 0 rgba(239,68,68,.55)}70%{box-shadow:0 0 0 9px rgba(239,68,68,0)}100%{box-shadow:0 0 0 0 rgba(239,68,68,0)}}
+@keyframes icoGifIn{from{opacity:0;transform:scale(1.18)}to{opacity:1;transform:scale(1.05)}}
+@keyframes icoDimIn{from{opacity:0}to{opacity:1}}
+@keyframes icoBar{from{height:50%}to{height:7%}}
+@keyframes icoUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@keyframes icoLine{from{transform:translateY(115%)}to{transform:translateY(0)}}
+@keyframes icoFill{from{width:0}to{width:100%}}
+@keyframes icoFade{from{opacity:0}to{opacity:1}}
+.slide-intro.is-playing .intro-gif{animation:icoGifIn 1.25s cubic-bezier(.2,.8,.2,1) forwards}
+.slide-intro.is-playing .intro-dim{animation:icoDimIn .9s ease .25s forwards}
+.slide-intro.is-playing .intro-bar.top{animation:icoBar .95s cubic-bezier(.7,0,.2,1) .15s forwards}
+.slide-intro.is-playing .intro-bar.bot{animation:icoBar .95s cubic-bezier(.7,0,.2,1) .15s forwards}
+.slide-intro.is-playing .rec{animation:icoFade .5s ease .5s forwards}
+.slide-intro.is-playing .timecode{animation:icoFade .5s ease .5s forwards}
+.slide-intro.is-playing .skip{animation:icoUp .5s ease .9s forwards}
+.slide-intro.is-playing .intro-kicker{animation:icoUp .6s cubic-bezier(.2,.8,.2,1) 1.0s forwards}
+.slide-intro.is-playing .intro-title .ln:nth-child(1) > i{animation:icoLine .8s cubic-bezier(.16,1,.3,1) 1.25s forwards}
+.slide-intro.is-playing .intro-title .ln:nth-child(2) > i{animation:icoLine .8s cubic-bezier(.16,1,.3,1) 1.45s forwards}
+.slide-intro.is-playing .intro-tag{animation:icoUp .7s ease 1.8s forwards}
+.slide-intro.is-playing .intro-progress{animation:icoFade .4s ease 2.15s forwards}
+.slide-intro.is-playing .intro-progress > span{animation:icoFill 1.3s cubic-bezier(.4,0,.2,1) 2.2s forwards}
+.slide-intro.is-playing .intro-cta{animation:icoUp .6s ease 3.45s forwards}
+/* ==== TEKS TAJAM: matikan parallax HANYA pada elemen berisi teks ==== */
+/* (latar bentuk + foto tetap ber-parallax => kedalaman sinematik terjaga) */
+.slide-inner{transform:none!important;will-change:auto!important}  /* judul, paragraf, kartu, list, note, quiz, checklist, label APD */
+.tile-label{transform:none!important}                              /* caption di atas blok foto */
+.chip{transform:none!important}                                    /* label kategori di slide pembuka */
+.slide{filter:none!important}                                      /* hapus blur sesaat saat pindah slide => teks selalu fokus */
+     
+@media (prefers-reduced-motion:reduce){*{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}}
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     SLIDE. Edit teks => cari "SLIDE n". Edit gambar => IMAGE_URLS.
+     ============================================================ -->
+<div class="frame"><div class="stage" id="stage"><div class="canvas" id="canvas">
+  <div class="paper"></div>
+  <div class="scene" aria-hidden="true">
+    <div class="layer back">
+      <div class="shape circle" style="width:250px;height:250px;background:var(--violet);left:-20px;top:105px;opacity:.92"></div>
+      <div class="shape square" style="width:160px;height:160px;background:var(--amber);right:70px;top:55px;transform:rotate(14deg);opacity:.92"></div>
+      <div class="shape pill" style="width:220px;height:82px;background:var(--pink);left:500px;bottom:18px;transform:rotate(-8deg);opacity:.90"></div>
+      <div class="shape circle" style="width:135px;height:135px;background:transparent;border:14px solid var(--mint);right:330px;bottom:120px;box-shadow:10px 10px 0 var(--ink)"></div>
+    </div>
+    <div class="layer mid">
+      <div class="shape circle" style="width:92px;height:92px;background:var(--mint);left:245px;top:545px;opacity:.90"></div>
+      <div class="shape square" style="width:78px;height:78px;background:var(--violet);right:210px;top:410px;transform:rotate(-12deg);opacity:.88"></div>
+      <div class="shape pill" style="width:145px;height:52px;background:var(--amber);left:1040px;top:150px;transform:rotate(10deg);opacity:.88"></div>
+    </div>
+    <div class="layer front">
+      <div class="shape circle" style="width:48px;height:48px;background:var(--pink);left:760px;top:120px;opacity:.90"></div>
+      <div class="shape square" style="width:44px;height:44px;background:var(--mint);right:520px;bottom:120px;transform:rotate(18deg);opacity:.90"></div>
+    </div>
+  </div>
+
+  <header class="topbar">
+    <div class="brand"><div class="brand-badge">☣️</div><span>Limbah B3 RS</span></div>
+    <div class="progress"><div id="bar"></div></div>
+    <button class="nav-btn" id="btnPrev">◀</button>
+    <div class="counter" id="counter">1 / 19</div>
+    <button class="nav-btn" id="btnNext">▶</button>
+    <button class="icon-btn" id="btnFull">⛶</button>
+  </header>
+
+  <main class="deck">
+
+    <!-- ===== SLIDE 0: INTRO GIF SINEMATIKA (TRAILER REVEAL) ===== -->
+    <section class="slide slide-intro active">
+      <div class="intro-stage">
+        <img class="intro-gif" data-img="intro" alt="Video intro pengelolaan limbah B3 rumah sakit">
+        <div class="intro-dim"></div>
+        <div class="intro-bars"><div class="intro-bar top"></div><div class="intro-bar bot"></div></div>
+        <div class="rec"><span class="rdot"></span><span>REC</span></div>
+        <div class="timecode">00:00:00</div>
+        <div class="skip" id="introSkip">Lewati Intro ⏭</div>
+        <div class="intro-content">
+          <span class="intro-kicker"><span class="live"></span> Safety Briefing • Footage Pembuka</span>
+          <h1 class="intro-title">
+            <span class="ln"><i>LIMBAH B3</i></span>
+            <span class="ln"><i><span class="accent">RUMAH SAKIT</span></i></span>
+          </h1>
+          <p class="intro-tag">Setiap tetes, setiap potong, setiap kemasan — <b>punya prosedur</b>. Kenali, pilahkan, amankan.</p>
+          <div class="intro-progress"><span></span></div>
+          <p class="intro-tag"><b>By AZIZ MUNANDAR</b></p>
+          <div class="intro-cta">
+            <button class="btn primary" id="introStart">▶ Mulai Presentasi</button>
+            <button class="btn ghost" id="introAgenda">Lihat Agenda</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== SLIDE 1: MINI POLL (foto berubah sesuai jawaban) ===== -->
+    <section class="slide">
+      <div class="slide-inner"><div class="body hero">
+        <div>
+          <span class="kicker">Agency Premium • Cinematic 16:9</span>
+          <h1>Limbah B3 <span class="hl hl-violet">Rumah Sakit</span><br><span class="hl hl-mint">Aman, Patuh, Berdampak</span></h1>
+          <p class="lead">Sebelum masuk materi, uji insting Anda: manakah yang <strong>wajib</strong> masuk ke pengelolaan limbah B3/infeksius?</p>
+          <div class="quiz">
+            <div class="quiz-title">Mini Poll Pembuka</div>
+            <div class="choices">
+              <button class="choice" data-correct="false"><span class="mark">A</span><span>💊 Obat belum kedaluwarsa, kemasan bersih</span></button>
+              <button class="choice" data-correct="true"><span class="mark">B</span><span>💉 Spuit bekas pakai terkontaminasi darah</span></button>
+              <button class="choice" data-correct="false"><span class="mark">C</span><span>🍽️ Sisa makanan pasien</span></button>
+              <button class="choice" data-correct="false"><span class="mark">D</span><span>📄 Kertas HVS bersih</span></button>
+            </div>
+            <div id="introFeedback" class="feedback"></div>
+          </div>
+          <div class="cta-row">
+            <button class="btn primary" id="startBtn">Mulai Presentasi →</button>
+            <button class="btn" id="askBtn">Pantik Diskusi</button>
+          </div>
+        </div>
+        <div class="hero-media">
+          <div class="tile hero-tile">
+            <div class="sticker">Foto Utama</div>
+            <div class="photo-parallax"><div class="photo-zoom"><img data-img="hero" alt="Foto utama pengelolaan limbah B3 rumah sakit"></div></div>
+            <div class="tile-label">Blok Foto Utama<small>Edit RESULT_IMAGES.initial untuk mengganti gambar ini.</small></div>
+          </div>
+          <div class="chip" style="left:-8px;top:58px;--accent:var(--pink);--cx:26px;--cy:16px"><span class="dot"></span><span>Infeksius</span></div>
+          <div class="chip" style="right:-10px;top:126px;--accent:var(--amber);--cx:-22px;--cy:14px"><span class="dot"></span><span>Kimia</span></div>
+          <div class="chip" style="left:12px;bottom:116px;--accent:var(--violet);--cx:20px;--cy:-16px"><span class="dot"></span><span>Tajam</span></div>
+          <div class="chip" style="right:24px;bottom:48px;--accent:var(--mint);--cx:-24px;--cy:-12px"><span class="dot"></span><span>Farmasi</span></div>
+        </div>
+      </div></div>
+    </section>
+
+    <!-- ===== SLIDE 2: AGENDA ===== -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="slide-head"><div><span class="kicker">Agenda</span><h2>Apa yang akan kita bahas?</h2></div><p>Dari pemahaman dasar hingga aksi nyata di lapangan.</p></div>
+        <div class="body"><div class="grid grid-4 fill stagger">
+          <div class="card violet"><div class="top-accent"></div><div class="icon"><span class="icon-text">01</span></div><h3>Pembuka</h3><p>Menguji persepsi awal tentang risiko limbah di RS.</p></div>
+          <div class="card mint"><div class="top-accent"></div><div class="icon"><span class="icon-text">02</span></div><h3>Definisi</h3><p>Memahami limbah B3 dan dasar hukum pengelolaannya.</p></div>
+          <div class="card amber"><div class="top-accent"></div><div class="icon"><span class="icon-text">03</span></div><h3>Sumber</h3><p>Mengenali asal limbah B3 di berbagai unit RS.</p></div>
+          <div class="card pink"><div class="top-accent"></div><div class="icon"><span class="icon-text">04</span></div><h3>Bahaya</h3><p>Infektius, toksik, korosif, reaktif, mudah menyala/meledak.</p></div>
+          <div class="card violet"><div class="top-accent"></div><div class="icon"><span class="icon-text">05</span></div><h3>Alur & Wadah</h3><p>Rantai pengelolaan dan katalog warna wadah B3 medis.</p></div>
+          <div class="card mint"><div class="top-accent"></div><div class="icon"><span class="icon-text">06</span></div><h3>APD</h3><p>Urutan memakai & melepas APD penanganan limbah.</p></div>
+          <div class="card amber"><div class="top-accent"></div><div class="icon"><span class="icon-text">07</span></div><h3>Tanggap</h3><p>Spill kit & prosedur tumpahan infeksius (muntahan).</p></div>
+          <div class="card pink"><div class="top-accent"></div><div class="icon"><span class="icon-text">08</span></div><h3>Pembuangan</h3><p>Alur aman limbah APD habis pakai + checklist aksi.</p></div>
+        </div></div>
+      </div>
+    </section>
+
+    <!-- ===== SLIDE 3: DEFINISI ===== -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="slide-head"><div><span class="kicker">Dasar Pemahaman</span><h2>Apa itu Limbah B3 RS?</h2></div><p>Bukan sekadar sampah medis; ada kriteria sifat, konsentrasi, dan jumlah.</p></div>
+        <div class="body split">
+          <div>
+            <p class="lead">Limbah B3 adalah limbah yang mengandung atau terkontaminasi bahan berbahaya dan/atau beracun yang karena sifat, konsentrasi, dan/atau jumlahnya dapat mencemarkan lingkungan, membahayakan kesehatan manusia, atau menimbulkan penyakit.</p>
+            <ul class="list"><li>Dapat berasal dari layanan medis, penunjang medis, dan operasional tertentu.</li><li>Tidak semua sampah RS adalah B3; sampah domestik perlu dipisahkan sejak sumber.</li><li>Kesalahan pemilahan dapat membuat limbah biasa berpotensi menjadi berbahaya.</li></ul>
+            <div class="note"><strong>Catatan Regulasi:</strong> Rujuk PP 22/2021, Permen LHK terkait limbah B3, Permenkes 7/2019, serta SOP internal rumah sakit.</div>
+          </div>
+          <div class="grid grid-2 fill stagger">
+            <div class="card violet"><div class="top-accent"></div><div class="icon">📄</div><h3>PP 22/2021</h3><p>Perlindungan dan pengelolaan lingkungan hidup.</p></div>
+            <div class="card mint"><div class="top-accent"></div><div class="icon">🌿</div><h3>Permen LHK</h3><p>Penyimpanan, pengangkutan, pengolahan, pemantauan.</p></div>
+            <div class="card amber"><div class="top-accent"></div><div class="icon">🏥</div><h3>Permenkes 7/2019</h3><p>Kesehatan lingkungan rumah sakit.</p></div>
+            <div class="card pink"><div class="top-accent"></div><div class="icon">✅</div><h3>SOP RS</h3><p>Warna wadah, rute angkut, APD, pelaporan, audit.</p></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== SLIDE 4: SUMBER ===== -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="slide-head"><div><span class="kicker">Sumber Timbulan</span><h2>Sumber Limbah B3 RS</h2></div><p>Setiap unit memiliki profil risiko berbeda.</p></div>
+        <div class="body"><div class="grid grid-3 fill stagger">
+          <div class="card pink"><div class="top-accent"></div><div class="icon">🛏️</div><h3>Ruang Perawatan</h3><p>Kasa berdarah, sarung tangan terkontaminasi, selang infus, bahan habis pakai medis.</p></div>
+          <div class="card amber"><div class="top-accent"></div><div class="icon">🚑</div><h3>IGD & Poliklinik</h3><p>Spuit, jarum, ampul, limbah terkontaminasi darah/cairan tubuh.</p></div>
+          <div class="card violet"><div class="top-accent"></div><div class="icon">🔪</div><h3>Kamar Operasi</h3><p>Jaringan tubuh, benda tajam, material terkontaminasi tinggi.</p></div>
+          <div class="card mint"><div class="top-accent"></div><div class="icon">🧪</div><h3>Laboratorium</h3><p>Reagen kimia, sampel infeksius, limbah mikrobiologi.</p></div>
+          <div class="card pink"><div class="top-accent"></div><div class="icon">💊</div><h3>Farmasi</h3><p>Obat kedaluwarsa/rusak, sitostatik, antibiotik tertentu.</p></div>
+          <div class="card amber"><div class="top-accent"></div><div class="icon">☢️</div><h3>Radiologi/Nuclear</h3><p>Limbah radioaktif, sumber tertutup, material terkontaminasi radiasi.</p></div>
+        </div></div>
+      </div>
+    </section>
+
+    <!-- ===== SLIDE 5: KARAKTERISTIK ===== -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="slide-head"><div><span class="kicker">Sifat Bahaya</span><h2>Karakteristik Bahaya</h2></div><p>Karakter menentukan pemilahan, penyimpanan, dan penanganan.</p></div>
+        <div class="body"><div class="grid grid-3 fill stagger">
+          <div class="card pink"><div class="top-accent"></div><div class="icon">☣️</div><h3>Infektius</h3><p>Mengandung patogen yang dapat menyebabkan infeksi.</p></div>
+          <div class="card amber"><div class="top-accent"></div><div class="icon">🔥</div><h3>Mudah Menyala</h3><p>Dapat terbakar karena gesekan, panas, atau reaksi kimia.</p></div>
+          <div class="card violet"><div class="top-accent"></div><div class="icon">💥</div><h3>Mudah Meledak</h3><p>Reaktif terhadap tekanan, suhu, atau gesekan.</p></div>
+          <div class="card mint"><div class="top-accent"></div><div class="icon">⚗️</div><h3>Reaktif</h3><p>Menghasilkan gas/uap/panas berbahaya saat kontak air/asam.</p></div>
+          <div class="card pink"><div class="top-accent"></div><div class="icon">☠️</div><h3>Toksik</h3><p>Dapat menyebabkan keracunan akut maupun kronis.</p></div>
+          <div class="card amber"><div class="top-accent"></div><div class="icon">🧫</div><h3>Korosif</h3><p>Merusak logam, kulit, atau material lain secara kimia.</p></div>
+        </div></div>
+      </div>
+    </section>
+
+    <!-- ===== SLIDE 6: DAMPAK ===== -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="slide-head"><div><span class="kicker">Mengapa Penting?</span><h2>Dampak Jika Salah Kelola</h2></div><p>Risikonya berlapis: manusia, lingkungan, dan institusi.</p></div>
+        <div class="body stack">
+          <div class="grid grid-3 fill stagger">
+            <div class="card pink"><div class="top-accent"></div><div class="icon">🩺</div><h3>Kesehatan</h3><p>Luka tusuk, paparan darah, infeksi silang, keracunan, penyakit akibat kerja.</p></div>
+            <div class="card mint"><div class="top-accent"></div><div class="icon">🌍</div><h3>Lingkungan</h3><p>Pencemaran tanah, air, udara, residu berbahaya jika pembakaran tidak terkendali.</p></div>
+            <div class="card violet"><div class="top-accent"></div><div class="icon">⚖️</div><h3>Hukum & Reputasi</h3><p>Sanksi administratif, denda, gangguan operasional, menurunnya kepercayaan publik.</p></div>
+          </div>
+          <div class="note"><strong>Pesan Kunci:</strong> Pengelolaan limbah B3 bukan hanya urusan IPSRS atau sanitasi, tetapi tanggung jawab bersama: dokter, perawat, laboran, farmasi, petugas kebersihan, hingga manajemen.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== SLIDE 7: DATA ===== -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="slide-head"><div><span class="kicker">Data & Gambaran Umum</span><h2>Angka yang Perlu Diingat</h2></div><p>Contoh gambaran umum untuk memantik kesadaran.</p></div>
+        <div class="body stack">
+          <div class="grid grid-4 fill stagger">
+            <div class="card pink stat"><div class="top-accent"></div><span class="num" data-count="15" data-suffix="%">0%</span><h3>Limbah Berbahaya</h3><p>Sebagian limbah faskes dapat tergolong berbahaya.</p></div>
+            <div class="card mint stat"><div class="top-accent"></div><span class="num" data-count="85" data-suffix="%">0%</span><h3>Non-B3/Domestik</h3><p>Jika terpisah benar, tidak perlu masuk jalur B3.</p></div>
+            <div class="card violet stat"><div class="top-accent"></div><span class="num" data-count="3" data-suffix="">0</span><h3>Pilar Utama</h3><p>Pilah di sumber, wadah standar, pengolah berizin.</p></div>
+            <div class="card amber stat"><div class="top-accent"></div><span class="num" data-count="100" data-suffix="%">0%</span><h3>Terdokumentasi</h3><p>Manifest, log TPS, pelatihan, insiden, verifikasi.</p></div>
+          </div>
+          <div class="note"><strong>Catatan:</strong> Proporsi limbah dapat berbeda antar rumah sakit. Gunakan data lokal RS Anda sebagai bukti paling kuat.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== SLIDE 8: ALUR PENGELOLAAN ===== -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="slide-head"><div><span class="kicker">Sistem Pengelolaan</span><h2>Alur Pengelolaan Limbah B3</h2></div><p>Putus di satu titik, risiko meningkat di titik berikutnya.</p></div>
+        <div class="body"><div class="grid grid-3 fill stagger">
+          <div class="card mint"><div class="top-accent"></div><div class="icon">1</div><h3>Pilah di Sumber</h3><p>Pemisahan awal menentukan seluruh rantai aman.</p></div>
+          <div class="card violet"><div class="top-accent"></div><div class="icon">2</div><h3>Wadah Standar</h3><p>Kantong kuning, safety box, wadah kimia tertutup.</p></div>
+          <div class="card amber"><div class="top-accent"></div><div class="icon">3</div><h3>Angkut Internal</h3><p>Rute dan jadwal jelas, hindari area publik.</p></div>
+          <div class="card pink"><div class="top-accent"></div><div class="icon">4</div><h3>TPS Limbah B3</h3><p>Aman, tertutup, terkunci, berlabel, tidak overload.</p></div>
+          <div class="card violet"><div class="top-accent"></div><div class="icon">5</div><h3>Manifest</h3><p>Serah terima terdokumentasi ke pengangkut berizin.</p></div>
+          <div class="card mint"><div class="top-accent"></div><div class="icon">6</div><h3>Pengolahan Akhir</h3><p>Autoclave, incinerator terkendali, atau teknologi berizin.</p></div>
+        </div></div>
+      </div>
+    </section>
+
+    <!-- ===== SLIDE 9: PEMILAHAN DI SUMBER ===== -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="slide-head"><div><span class="kicker">Praktik Lapangan</span><h2>Pemilahan di Sumber</h2></div><p>Blok gambar di bawah bisa Anda ganti dengan foto asli RS Anda.</p></div>
+        <div class="body rows-photo">
+          <div class="grid grid-3 fill stagger">
+            <div class="tile"><div class="photo-parallax"><div class="photo-zoom"><img data-img="infectious" alt="Foto limbah infeksius kantong kuning"></div></div><div class="tile-label">Kuning: Infeksius<small>Edit IMAGE_URLS.infectious</small></div></div>
+            <div class="tile"><div class="photo-parallax"><div class="photo-zoom"><img data-img="sharps" alt="Foto safety box benda tajam"></div></div><div class="tile-label">Safety Box: Tajam<small>Edit IMAGE_URLS.sharps</small></div></div>
+            <div class="tile"><div class="photo-parallax"><div class="photo-zoom"><img data-img="domestic" alt="Foto sampah domestik rumah sakit"></div></div><div class="tile-label">Hitam/Domestik<small>Edit IMAGE_URLS.domestic</small></div></div>
+          </div>
+          <div class="grid grid-3 fill stagger">
+            <div class="card mint"><div class="top-accent"></div><div class="icon">🎯</div><h3>Pilah di Titik Hasil</h3><p>Letakkan wadah dekat sumber, bukan jauh di ujung koridor.</p></div>
+            <div class="card amber"><div class="top-accent"></div><div class="icon">🚫</div><h3>Jangan Campur</h3><p>Satu benda tajam/infeksius ke kantong domestik = satu kantong jadi B3.</p></div>
+            <div class="card pink"><div class="top-accent"></div><div class="icon">🏷️</div><h3>Label & Tanggal</h3><p>Jenis limbah, tanggal, unit penghasil, simbol bahaya, peringatan.</p></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== SLIDE 10: KATEGORI WADAH + PRESENTER ===== -->
+    <section class="slide">
+      <div class="slide-inner wadah-slide">
+        <div class="slide-head"><div><span class="kicker">Katalog Warna Wadah</span><h2>Kategori Wadah Sampah B3 Medis</h2></div><p>5 kategori warna wadah di atas; dua presenter di pojok kiri‑kanan bawah.</p></div>
+        <div class="body">
+          <div class="wadah-board stagger">
+            <article class="wadah-card kuning"><div class="wadah-art"><div class="bag"><span class="art-icon">☣️</span></div><div class="bin"><span class="art-icon">☣️</span></div></div><h3>Kuning</h3><div class="wadah-sub">Limbah Infeksius & Patologis</div><ul class="wadah-list"><li>Perban berdarah</li><li>Kasa & balutan</li><li>Cairan tubuh</li><li>Jaringan / patologi</li></ul><div class="wadah-tag">Kantong + tempat sampah kuning</div></article>
+            <article class="wadah-card merah"><div class="wadah-art"><div class="bag"><span class="art-icon">☢️</span></div><div class="bin"><span class="art-icon">☢️</span></div></div><h3>Merah</h3><div class="wadah-sub">Limbah Radioaktif</div><ul class="wadah-list"><li>Terkontaminasi radioterapi</li><li>Sumber tertutup</li><li>Material radiologi / nuklir</li></ul><div class="wadah-tag">Penanganan khusus & berizin</div></article>
+            <article class="wadah-card ungu"><div class="wadah-art"><div class="bag"><span class="art-icon">🧬</span></div><div class="bin"><span class="art-icon">🧪</span></div></div><h3>Ungu</h3><div class="wadah-sub">Limbah Sitotoksik</div><ul class="wadah-list"><li>Sisa obat kemoterapi</li><li>Vial / botol kemo</li><li>Material kontak sitostatik</li></ul><div class="wadah-tag">Jangan dicampur limbah biasa</div></article>
+            <article class="wadah-card coklat"><div class="wadah-art"><div class="bag"><span class="art-icon">💊</span></div><div class="bin"><span class="art-icon">🧪</span></div></div><h3>Coklat</h3><div class="wadah-sub">Limbah Farmasi & Kimiawi</div><ul class="wadah-list"><li>Obat kedaluwarsa</li><li>Obat rusak / ditarik</li><li>Sisa bahan kimia / reagen</li></ul><div class="wadah-tag">Ikuti SDS & label</div></article>
+            <article class="wadah-card sharp"><div class="wadah-art"><div class="safety"><span class="art-icon">☣️</span></div><div class="sharp-tools"><span>💉</span><span>🔪</span></div></div><h3>Safety Box</h3><div class="wadah-sub">Limbah Benda Tajam</div><ul class="wadah-list"><li>Jarum suntik</li><li>Pisau bedah / scalpel</li><li>Ampul kaca</li><li>Fragment tajam lain</li></ul><div class="wadah-tag">Maks 3/4, jangan dibuka ulang</div></article>
+          </div>
+          <div class="wadah-presenters">
+            <div class="presenter left"><img data-img="presenterLeft" alt="Presenter kiri"></div>
+            <div class="note presenter-note"><strong>Pesan kunci:</strong> Kenali warna wadah sejak di sumber. Satu kesalahan pemilahan dapat mengubah seluruh rantai menjadi berisiko.</div>
+            <div class="presenter right"><img data-img="presenterRight" alt="Presenter kanan"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== SLIDE 11: MEMAKAI APD (DONNING) — callaway, default terkunci ===== -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="slide-head"><div><span class="kicker">Perlindungan Petugas</span><h2>Urutan Memakai APD (Donning)</h2></div><p>Garis sudah menunjuk ke bagian tubuh. Bila perlu geser mikro, pakai 🎯 Kalibrasi.</p></div>
+        <div class="body apd-body">
+          <div class="apd-callaway" data-calib-id="donning">
+            <svg class="apd-lines" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"></svg>
+            <div class="apd-figure"><div class="apd-figure-glow"></div><img class="apd-figure-img" data-img="apd" alt="Petugas menggunakan APD lengkap"><div class="apd-ground"></div></div>
+            <div class="apd-label left dark" style="top:8%;--accent:var(--violet)"><span class="apd-stub"></span><div class="apd-num">5</div><div><h3 class="apd-ltitle"><span class="em">🧢</span>Topi Medis</h3><p class="apd-ldesc">Melindungi rambut dan kepala dari kontaminasi.</p></div></div>
+            <div class="apd-label right" style="top:20%;--accent:var(--mint)"><span class="apd-stub"></span><div class="apd-num">2</div><div><h3 class="apd-ltitle"><span class="em">🥽</span>Pelindung Wajah / Mata</h3><p class="apd-ldesc">Goggles atau face shield dari percikan cairan/limbah.</p></div></div>
+            <div class="apd-label left" style="top:32%;--accent:var(--mint)"><span class="apd-stub"></span><div class="apd-num">1</div><div><h3 class="apd-ltitle"><span class="em">😷</span>Masker</h3><p class="apd-ldesc">Masker bedah/respirator melindungi saluran napas.</p></div></div>
+            <div class="apd-label right" style="top:48%;--accent:var(--amber)"><span class="apd-stub"></span><div class="apd-num">4</div><div><h3 class="apd-ltitle"><span class="em">🥼</span>Pakaian Pelindung / Apron</h3><p class="apd-ldesc">Melindungi kulit dan pakaian dari percikan/tumpahan.</p></div></div>
+            <div class="apd-label left dark" style="top:62%;--accent:var(--pink)"><span class="apd-stub"></span><div class="apd-num">3</div><div><h3 class="apd-ltitle"><span class="em">🧤</span>Sarung Tangan Khusus</h3><p class="apd-ldesc">Heavy duty/chemical resistant untuk cairan & bahan kimia.</p></div></div>
+            <div class="apd-label right dark" style="top:82%;--accent:var(--violet)"><span class="apd-stub"></span><div class="apd-num">6</div><div><h3 class="apd-ltitle"><span class="em">🥾</span>Sepatu Boot</h3><p class="apd-ldesc">Sepatu tertutup melindungi kaki dari tumpahan, kaca, benda tajam.</p></div></div>
+          </div>
+          <div class="note apd-footnote"><strong>Semua APD sudah lengkap.</strong> Petugas siap mengangkut dan membuang sampah B3 dengan aman — kenakan sesuai urutan, lepas dengan urutan terbalik, dan selalu lakukan higiene tangan setelah melepas APD.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== SLIDE 12: MELEPAS APD (DOFFING) — callaway, default terkunci ===== -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="slide-head"><div><span class="kicker">Perlindungan Petugas</span><h2>Urutan Melepas APD (Doffing)</h2></div><p>Nomor = urutan melepas. Prinsip: dari paling terkontaminasi ke lebih bersih.</p></div>
+        <div class="body apd-body">
+          <div class="apd-callaway" data-calib-id="doffing">
+            <svg class="apd-lines" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"></svg>
+            <div class="apd-figure"><div class="apd-figure-glow"></div><img class="apd-figure-img" data-img="apd" alt="Petugas melepas APD"><div class="apd-ground"></div></div>
+            <div class="apd-label left dark" style="top:8%;--accent:var(--violet)"><span class="apd-stub"></span><div class="apd-num">5</div><div><h3 class="apd-ltitle"><span class="em">🧢</span>Topi Medis</h3><p class="apd-ldesc">Lepas dari belakang, hindari menyentuh bagian luar.</p></div></div>
+            <div class="apd-label right" style="top:20%;--accent:var(--mint)"><span class="apd-stub"></span><div class="apd-num">3</div><div><h3 class="apd-ltitle"><span class="em">🥽</span>Pelindung Wajah / Mata</h3><p class="apd-ldesc">Lepas dari tali belakang, pegang bagian bersih.</p></div></div>
+            <div class="apd-label left" style="top:32%;--accent:var(--mint)"><span class="apd-stub"></span><div class="apd-num">4</div><div><h3 class="apd-ltitle"><span class="em">😷</span>Masker</h3><p class="apd-ldesc">Lepas dari tali belakang, jangan sentuh bagian depan.</p></div></div>
+            <div class="apd-label right" style="top:48%;--accent:var(--amber)"><span class="apd-stub"></span><div class="apd-num">2</div><div><h3 class="apd-ltitle"><span class="em">🥼</span>Pakaian Pelindung / Apron</h3><p class="apd-ldesc">Lepas dari depan, gulung bagian terkontaminasi ke dalam.</p></div></div>
+            <div class="apd-label left dark" style="top:62%;--accent:var(--pink)"><span class="apd-stub"></span><div class="apd-num">1</div><div><h3 class="apd-ltitle"><span class="em">🧤</span>Sarung Tangan Khusus</h3><p class="apd-ldesc">Pertama dilepas; balikkan bagian dalam ke luar.</p></div></div>
+            <div class="apd-label right dark" style="top:82%;--accent:var(--violet)"><span class="apd-stub"></span><div class="apd-num">6</div><div><h3 class="apd-ltitle"><span class="em">🥾</span>Sepatu Boot</h3><p class="apd-ldesc">Lepas terakhir jika area masih berisiko; bersihkan/disinfeksi.</p></div></div>
+          </div>
+          <div class="note apd-footnote doff"><strong>Penting:</strong> Melepas APD sama berisikonya dengan memakainya. Lakukan perlahan, hindari menyentuh wajah, dan segera lakukan higiene tangan setelah seluruh APD dilepas.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== SLIDE 13: SPILL KIT (4 .png) ===== -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="slide-head"><div><span class="kicker">Tanggap Darurat</span><h2>Isi Perlengkapan Spill Kit</h2></div><p>Kit siap pakai untuk menangani tumpahan limbah B3/infeksius secara aman dan terkontrol.</p></div>
+        <div class="body spill-body">
+          <div class="spill-left">
+            <p class="lead">Spill kit harus berada di unit berisiko, mudah dijangkau, dan dicek kelengkapannya secara berkala.</p>
+            <ul class="list"><li>Absorbent / serapan tumpahan</li><li>Sarung tangan tebal & APD dasar</li><li>Kantong limbah infeksius kuning</li><li>Desinfektan, sekop, label, dan kantong buang</li></ul>
+            <div class="note"><strong>Prinsip:</strong> Jangan membersihkan tumpahan dengan alat seadanya. Gunakan spill kit agar paparan tidak menyebar ke petugas, pasien, maupun lingkungan.</div>
+          </div>
+          <div class="img-grid-2 stagger">
+            <div class="tile contain"><img data-img="spill1" alt="Isi spill kit 1"><div class="tile-label">Absorbent<small>assets/spillkit-1.png</small></div></div>
+            <div class="tile contain"><img data-img="spill2" alt="Isi spill kit 2"><div class="tile-label">APD & Sarung Tangan<small>assets/spillkit-2.png</small></div></div>
+            <div class="tile contain"><img data-img="spill3" alt="Isi spill kit 3"><div class="tile-label">Kantong Infeksius<small>assets/spillkit-3.png</small></div></div>
+            <div class="tile contain"><img data-img="spill4" alt="Isi spill kit 4"><div class="tile-label">Desinfektan & Alat Bantu<small>assets/spillkit-4.png</small></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== SLIDE 14: TUMPAHAN MUNTAHAN (6 .jpg) ===== -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="slide-head"><div><span class="kicker">Prosedur Lapangan</span><h2>Penanganan Tumpahan Infeksius (Muntahan)</h2></div><p>Enam langkah aman untuk mengendalikan tumpahan bahan berpotensi infeksius.</p></div>
+        <div class="body"><div class="step-grid-3 stagger">
+          <div class="step-card dark" style="--accent:var(--pink)"><div class="sc-img"><div class="sc-num">1</div><img data-img="munt1" alt="Langkah 1 tumpahan infeksius"></div><div class="sc-cap"><h3>Amankan Area</h3><p>Pasang peringatan, batasi akses, gunakan APD lengkap.</p></div></div>
+          <div class="step-card" style="--accent:var(--amber)"><div class="sc-img"><div class="sc-num">2</div><img data-img="munt2" alt="Langkah 2 tumpahan infeksius"></div><div class="sc-cap"><h3>Tutup & Serap</h3><p>Gunakan absorbent spill kit dari tepi menuju pusat.</p></div></div>
+          <div class="step-card" style="--accent:var(--mint)"><div class="sc-img"><div class="sc-num">3</div><img data-img="munt3" alt="Langkah 3 tumpahan infeksius"></div><div class="sc-cap"><h3>Disinfeksi</h3><p>Aplikasikan desinfektan sesuai kontak time SOP.</p></div></div>
+          <div class="step-card dark" style="--accent:var(--violet)"><div class="sc-img"><div class="sc-num">4</div><img data-img="munt4" alt="Langkah 4 tumpahan infeksius"></div><div class="sc-cap"><h3>Angkat Aman</h3><p>Masukkan material terkontaminasi ke kantong kuning.</p></div></div>
+          <div class="step-card" style="--accent:var(--pink)"><div class="sc-img"><div class="sc-num">5</div><img data-img="munt5" alt="Langkah 5 tumpahan infeksius"></div><div class="sc-cap"><h3>Bersihkan Ulang</h3><p>Pastikan area bebas residu dan aman digunakan.</p></div></div>
+          <div class="step-card" style="--accent:var(--amber)"><div class="sc-img"><div class="sc-num">6</div><img data-img="munt6" alt="Langkah 6 tumpahan infeksius"></div><div class="sc-cap"><h3>Lapor & Dokumentasi</h3><p>Catat insiden, evaluasi penyebab, dan tindak lanjut.</p></div></div>
+        </div></div>
+      </div>
+    </section>
+
+    <!-- ===== SLIDE 15: ALUR PEMBUANGAN APD (6 .jpg + video) ===== -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="slide-head"><div><span class="kicker">Pembuangan Akhir</span><h2>Alur Aman Pembuangan Limbah APD Habis Pakai</h2></div><p>APD bekas penanganan limbah B3 diperlakukan sebagai limbah infeksius/B3 medis.</p></div>
+        <div class="body alur-body">
+          <div class="tile video-tile" id="videoTile">
+            <div class="sticker video-sticker">🎬 Video Alur</div>
+            <video controls playsinline preload="metadata"><source src="assets/video-alur-pembuangan-apd.mp4" type="video/mp4"></video>
+            <div class="video-hint">Klik play untuk menonton</div>
+            <div class="tile-label">Video Dokumentasi<small>assets/video-alur-pembuangan-apd.mp4</small></div>
+          </div>
+          <div class="step-grid-2x3 stagger">
+            <div class="step-card dark" style="--accent:var(--pink)"><div class="sc-img"><div class="sc-num">1</div><img data-img="flow1" alt="Alur pembuangan APD 1"></div><div class="sc-cap"><h3>Lepas Hati-hati</h3><p>Jangan sentuh bagian luar APD.</p></div></div>
+            <div class="step-card" style="--accent:var(--amber)"><div class="sc-img"><div class="sc-num">2</div><img data-img="flow2" alt="Alur pembuangan APD 2"></div><div class="sc-cap"><h3>Balik & Kumpulkan</h3><p>Satukan ke dalam kantong infeksius.</p></div></div>
+            <div class="step-card" style="--accent:var(--mint)"><div class="sc-img"><div class="sc-num">3</div><img data-img="flow3" alt="Alur pembuangan APD 3"></div><div class="sc-cap"><h3>Ikat Rapat</h3><p>Tutup kantong dengan teknik gooseneck.</p></div></div>
+            <div class="step-card dark" style="--accent:var(--violet)"><div class="sc-img"><div class="sc-num">4</div><img data-img="flow4" alt="Alur pembuangan APD 4"></div><div class="sc-cap"><h3>Label & Tanggal</h3><p>Tulis unit penghasil dan simbol bahaya.</p></div></div>
+            <div class="step-card" style="--accent:var(--pink)"><div class="sc-img"><div class="sc-num">5</div><img data-img="flow5" alt="Alur pembuangan APD 5"></div><div class="sc-cap"><h3>Ke TPS B3</h3><p>Pindahkan ke tempat penyimpanan sementara.</p></div></div>
+            <div class="step-card" style="--accent:var(--amber)"><div class="sc-img"><div class="sc-num">6</div><img data-img="flow6" alt="Alur pembuangan APD 6"></div><div class="sc-cap"><h3>Serah Berizin</h3><p>Manifest ke pengangkut/pengolah berizin.</p></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== SLIDE 16: CHECKLIST ===== -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="slide-head"><div><span class="kicker">Evaluasi Mandiri</span><h2>Checklist Kepatuhan</h2></div><p>Centang item yang sudah berjalan di unit Anda.</p></div>
+        <div class="body check-layout">
+          <div><div id="auditChecklist" class="checks stagger">
+            <label class="check"><input type="checkbox"><span>SOP pengelolaan limbah B3 tersedia dan mudah diakses.</span></label>
+            <label class="check"><input type="checkbox"><span>Petugas medis dan nonmedis mendapat pelatihan pemilahan limbah.</span></label>
+            <label class="check"><input type="checkbox"><span>Wadah limbah sesuai jenis: infeksius, tajam, domestik, kimia, farmasi.</span></label>
+            <label class="check"><input type="checkbox"><span>Label, simbol bahaya, tanggal, dan unit penghasil tercantum jelas.</span></label>
+            <label class="check"><input type="checkbox"><span>Safety box tidak diisi melebihi 3/4 kapasitas.</span></label>
+            <label class="check"><input type="checkbox"><span>TPS limbah B3 aman, tertutup, terkunci, dan jauh dari area publik.</span></label>
+            <label class="check"><input type="checkbox"><span>Ada manifest/berita acara serah terima ke pihak pengangkut berizin.</span></label>
+            <label class="check"><input type="checkbox"><span>APD tersedia, layak pakai, dan penggunaannya diawasi.</span></label>
+            <label class="check"><input type="checkbox"><span>Insiden tumpahan/pajanan dilaporkan dan dievaluasi.</span></label>
+            <label class="check"><input type="checkbox"><span>Audit internal dilakukan berkala dengan tindak lanjut terdokumentasi.</span></label>
+          </div></div>
+          <div class="card mint ring-card">
+            <div class="top-accent"></div><div class="icon" style="margin:0 auto 8px">📋</div><h3>Skor Kepatuhan</h3>
+            <div class="ring-wrap"><svg class="ring" viewBox="0 0 200 200"><defs><linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#34d399"/><stop offset="100%" stop-color="#8b5cf6"/></linearGradient></defs><circle class="ring-bg" cx="100" cy="100" r="82"></circle><circle id="ringFg" class="ring-fg" cx="100" cy="100" r="82"></circle></svg><div class="ring-center"><div><div id="ringText">0%</div><div class="muted">terpenuhi</div></div></div></div>
+            <div class="note" style="margin-top:14px;text-align:left"><strong>Cara Pakai:</strong> Gunakan checklist ini sebagai template audit internal. Buat tindak lanjut untuk item yang belum centang.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== SLIDE 17: DOKUMENTASI FOTO ===== -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="slide-head"><div><span class="kicker">Dokumentasi</span><h2>Blok Gambar Pendukung</h2></div><p>Ganti URL di IMAGE_URLS dengan foto TPS, laboratorium, farmasi, audit, atau pelatihan RS Anda.</p></div>
+        <div class="body"><div class="grid grid-2 fill stagger">
+          <div class="tile"><div class="photo-parallax"><div class="photo-zoom"><img data-img="tps" alt="Foto TPS limbah B3 rumah sakit"></div></div><div class="tile-label">TPS Limbah B3<small>Edit IMAGE_URLS.tps</small></div></div>
+          <div class="tile"><div class="photo-parallax"><div class="photo-zoom"><img data-img="lab" alt="Foto laboratorium rumah sakit"></div></div><div class="tile-label">Laboratorium<small>Edit IMAGE_URLS.lab</small></div></div>
+          <div class="tile"><div class="photo-parallax"><div class="photo-zoom"><img data-img="pharmacy" alt="Foto instalasi farmasi rumah sakit"></div></div><div class="tile-label">Farmasi<small>Edit IMAGE_URLS.pharmacy</small></div></div>
+          <div class="tile"><div class="photo-parallax"><div class="photo-zoom"><img data-img="audit" alt="Foto audit atau pelatihan pengelolaan limbah"></div></div><div class="tile-label">Audit / Pelatihan<small>Edit IMAGE_URLS.audit</small></div></div>
+        </div></div>
+      </div>
+    </section>
+
+    <!-- ===== SLIDE 18: PENUTUP ===== -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="slide-head"><div><span class="kicker">Penutup</span><h2>Penutup & Komitmen</h2></div><p>Dari kesadaran menjadi kebiasaan, dari kebiasaan menjadi budaya aman.</p></div>
+        <div class="body closing">
+          <div class="grid grid-3 fill stagger">
+            <div class="card violet"><div class="top-accent"></div><div class="icon">🗑️</div><h3>Pilah Sejak Awal</h3><p>Kebiasaan kecil di ruang perawatan menentukan keselamatan besar di hilir.</p></div>
+            <div class="card mint"><div class="top-accent"></div><div class="icon">📝</div><h3>Dokumentasikan</h3><p>Jika tidak tercatat, sulit diaudit; jika sulit diaudit, sulit diperbaiki.</p></div>
+            <div class="card amber"><div class="top-accent"></div><div class="icon">🔁</div><h3>Perbaiki Terus</h3><p>Jadikan insiden dan temuan audit sebagai pembelajaran.</p></div>
+          </div>
+          <div class="final-row">
+            <div><p class="thanks">Terima kasih</p><p class="muted" style="margin-top:8px">Silakan ganti blok gambar dengan foto asli RS Anda agar lebih kontekstual.</p></div>
+            <div class="note" style="margin-top:0"><strong>Ajakan Aksi:</strong> Mulai dari satu unit: pilih 3 item checklist yang paling mungkin diperbaiki minggu ini.</div>
+          </div>
+          <div class="cta-row"><button class="btn primary" id="commitBtn">Saya Komit Perbaiki 🎉</button><button class="btn pink" id="qaBtn">Buka Tanya Jawab</button></div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <div class="overlay"><div class="sweep-wrap"><div class="sweep"></div></div><div class="vignette"></div><div class="grain"></div></div>
+  <div class="hint">Navigasi: ← → / spasi / swipe layar. Gerakkan mouse untuk efek parallax cinematic.</div>
+  <div class="dots" id="dots"></div>
+  <div class="toast" id="toast"></div>
+</div></div></div>
+
+<!-- ============================================================
+     SCRIPT
+     ============================================================ -->
+<script>
+/* ---------- GAMBAR SLIDE 1 ---------- */
+const RESULT_IMAGES = {
+  initial: "assets/Hero-Default.png",
+  benar:   "assets/Jawaban-Benar.png",
+  salah:   "assets/Jawaban-Salah.png"
+};
+
+/* ---------- GAMBAR SEMUA SLIDE (satu aset per baris) ---------- */
+const IMAGE_URLS = {
+  intro: "assets/intro.gif",
+  hero: "",
+  infectious: "assets/infeksius-kantong-kuning.jpg", sharps: "assets/saftybox1.jpg", domestic: "assets/plastik-hitam.jpg",
+  apd: "assets/petugas-apd.png",
+  presenterLeft: "assets/presenter-1.png",
+  presenterRight: "assets/presenter-2.png",
+  spill1: "assets/spillkit-1.png",
+  spill2: "assets/spillkit-2.png",
+  spill3: "assets/spillkit-3.png",
+  spill4: "assets/spillkit-4.png",
+  munt1: "assets/infeksius-muntahan-1.jpg",
+  munt2: "assets/infeksius-muntahan-2.jpg",
+  munt3: "assets/infeksius-muntahan-3.jpg",
+  munt4: "assets/infeksius-muntahan-4.jpg",
+  munt5: "assets/infeksius-muntahan-5.jpg",
+  munt6: "assets/infeksius-muntahan-6.jpg",
+  flow1: "assets/alur-pembuangan-apd-1.jpg",
+  flow2: "assets/alur-pembuangan-apd-2.jpg",
+  flow3: "assets/alur-pembuangan-apd-3.jpg",
+  flow4: "assets/alur-pembuangan-apd-4.jpg",
+  flow5: "assets/alur-pembuangan-apd-5.jpg",
+  flow6: "assets/alur-pembuangan-apd-6.jpg",
+  tps: "assets/tps-b3.jpg", lab: "assets/laboratorium.jpg", pharmacy: "assets/parmasi.jpg", audit: "assets/dokumentasi-audit.jpg"
+};
+
+/* ---------- PLACEHOLDER ---------- */
+function placeholderFor(key,label){
+  const safe=(label||key).replace(/[<>&]/g,'');
+  const svg="<svg xmlns='http://www.w3.org/2000/svg' width='1200' height='800' viewBox='0 0 1200 800'>"
+    +"<rect width='1200' height='800' fill='#fffdf8'/>"
+    +"<circle cx='180' cy='140' r='120' fill='#8b5cf6' opacity='0.20'/>"
+    +"<rect x='780' y='80' width='260' height='260' rx='42' fill='#ec4899' opacity='0.16' transform='rotate(12 910 210)'/>"
+    +"<rect x='120' y='520' width='360' height='130' rx='65' fill='#34d399' opacity='0.18' transform='rotate(-8 300 585)'/>"
+    +"<rect x='40' y='40' width='1120' height='720' rx='36' fill='none' stroke='#17131f' stroke-width='8' opacity='0.16'/>"
+    +"<text x='600' y='390' text-anchor='middle' font-family='Arial, sans-serif' font-size='50' font-weight='700' fill='#17131f'>"+safe+"</text>"
+    +"<text x='600' y='455' text-anchor='middle' font-family='Arial, sans-serif' font-size='27' fill='#625a69'>IMAGE_URLS."+key+"</text></svg>";
+  return "data:image/svg+xml;charset=utf-8,"+encodeURIComponent(svg);
+}
+function applyImages(){
+  document.querySelectorAll("img[data-img]").forEach(function(img){
+    const key=img.dataset.img, url=(IMAGE_URLS[key]||"").trim(), fb=placeholderFor(key,img.alt||key);
+    img.onerror=function(){img.onerror=null;img.src=fb;}; img.src=url||fb;
+  });
+}
+window.setImage=function(key,url){IMAGE_URLS[key]=url;applyImages();};
+applyImages();
+
+/* ---------- SLIDE 1 JAWABAN ---------- */
+const RESULT_TILE=document.querySelector(".hero-tile");
+const RESULT_IMG=RESULT_TILE?RESULT_TILE.querySelector('img[data-img="hero"]'):null;
+const RESULT_STICKER=RESULT_TILE?RESULT_TILE.querySelector(".sticker"):null;
+const RESULT_LABEL_SMALL=RESULT_TILE?RESULT_TILE.querySelector(".tile-label small"):null;
+function makeResultFallbackSvg(title,color,emoji){
+  const svg="<svg xmlns='http://www.w3.org/2000/svg' width='900' height='900' viewBox='0 0 900 900'>"
+    +"<rect x='34' y='34' width='832' height='832' rx='48' fill='#fffdf8' stroke='#17131f' stroke-width='8'/>"
+    +"<circle cx='450' cy='360' r='170' fill='"+color+"' opacity='0.18'/>"
+    +"<text x='450' y='410' text-anchor='middle' font-size='150'>"+emoji+"</text>"
+    +"<text x='450' y='575' text-anchor='middle' font-family='Arial, sans-serif' font-size='52' font-weight='700' fill='#17131f'>"+title+"</text>"
+    +"<text x='450' y='635' text-anchor='middle' font-family='Arial, sans-serif' font-size='26' fill='#625a69'>Simpan file PNG satu folder dengan index.html</text></svg>";
+  return "data:image/svg+xml;charset=utf-8,"+encodeURIComponent(svg);
+}
+function showInitialImage(){
+  if(!RESULT_TILE||!RESULT_IMG)return; const src=(RESULT_IMAGES.initial||"").trim(); if(!src)return;
+  RESULT_TILE.classList.remove("result-active","result-correct","result-wrong"); RESULT_TILE.style.removeProperty("--result-color");
+  if(RESULT_STICKER)RESULT_STICKER.textContent="Foto Utama";
+  if(RESULT_LABEL_SMALL)RESULT_LABEL_SMALL.textContent="Edit RESULT_IMAGES.initial untuk mengganti gambar ini.";
+  RESULT_IMG.alt="Foto utama slide pembuka";
+  RESULT_IMG.onerror=function(){this.onerror=null;this.src=makeResultFallbackSvg("Foto Utama","#8b5cf6","🏥");};
+  RESULT_IMG.src=src;
+}
+function showResultImage(isCorrect){
+  if(!RESULT_TILE||!RESULT_IMG)return;
+  const title=isCorrect?"Jawaban Benar":"Jawaban Salah", color=isCorrect?"#34d399":"#ec4899", emoji=isCorrect?"✅":"❌";
+  const src=(isCorrect?RESULT_IMAGES.benar:RESULT_IMAGES.salah||"").trim();
+  RESULT_TILE.classList.add("result-active"); RESULT_TILE.classList.toggle("result-correct",isCorrect); RESULT_TILE.classList.toggle("result-wrong",!isCorrect);
+  RESULT_TILE.style.setProperty("--result-color",color);
+  if(RESULT_STICKER)RESULT_STICKER.textContent=isCorrect?"✅ Jawaban Benar":"❌ Jawaban Salah";
+  if(RESULT_LABEL_SMALL)RESULT_LABEL_SMALL.textContent=src?("Gambar: "+src):("Isi RESULT_IMAGES."+(isCorrect?"benar":"salah"));
+  RESULT_IMG.alt=title;
+  RESULT_IMG.onerror=function(){this.onerror=null;this.src=makeResultFallbackSvg(title,color,emoji);};
+  RESULT_IMG.src=src||makeResultFallbackSvg(title,color,emoji);
+}
+showInitialImage();
+
+/* ---------- UTIL ---------- */
+function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
+
+/* ============================================================
+   KALIBRASI CALLAWAY (slide 11 & 12) — DEFAULT TERKUNCI (v4)
+   Urutan = urutan .apd-label di DOM:
+   [topi, pelindung mata, masker, apron, sarung tangan, boot]
+   ============================================================ */
+const CALIB_PREFIX="apdCalib:v4:";
+const DEFAULT_ANCHORS=[
+  {x:50, y:6 },  // 5 Topi Medis
+  {x:50, y:12},  // 2 Pelindung Mata
+  {x:50, y:17},  // 1 Masker
+  {x:50, y:43},  // 4 Apron
+  {x:46, y:58},  // 3 Sarung Tangan
+  {x:50, y:93}   // 6 Sepatu Boot
+];
+function loadAnchors(id){
+  try{const raw=localStorage.getItem(CALIB_PREFIX+id);if(raw){const a=JSON.parse(raw);if(Array.isArray(a)&&a.length===6)return a;}}catch(e){}
+  return DEFAULT_ANCHORS.map(function(p){return {x:p.x,y:p.y};});
+}
+function saveAnchors(id,anchors){try{localStorage.setItem(CALIB_PREFIX+id,JSON.stringify(anchors));}catch(e){}}
+function computeNodes(callaway){
+  const cr=callaway.getBoundingClientRect();
+  const labels=callaway.querySelectorAll(".apd-label");
+  const nodes=[];
+  labels.forEach(function(lb){
+    const stub=lb.querySelector(".apd-stub");
+    const r=(stub||lb).getBoundingClientRect();
+    nodes.push({x:clamp((r.left+r.width/2-cr.left)/cr.width*100,0,100),y:clamp((r.top+r.height/2-cr.top)/cr.height*100,0,100)});
+  });
+  return nodes;
+}
+function pathD(n,a){
+  const sign=a.x>=n.x?1:-1;
+  const off=Math.max(6,Math.abs(a.x-n.x)*0.42);
+  const c1x=n.x+sign*off, c2x=a.x-sign*off;
+  return "M"+n.x.toFixed(2)+" "+n.y.toFixed(2)+" C"+c1x.toFixed(2)+" "+n.y.toFixed(2)+", "+c2x.toFixed(2)+" "+a.y.toFixed(2)+", "+a.x.toFixed(2)+" "+a.y.toFixed(2);
+}
+function initCallaway(callaway, idx){
+  const id=callaway.getAttribute("data-calib-id")||("cal"+idx);
+  const svg=callaway.querySelector(".apd-lines");
+  const labels=callaway.querySelectorAll(".apd-label");
+  let anchors=loadAnchors(id);
+  let nodes=computeNodes(callaway);
+  let paths=[]; const handles=[]; let dragging=-1;
+  const ctrl=document.createElement("div"); ctrl.className="calib-controls";
+  ctrl.innerHTML='<button class="calib-btn reset" type="button">↺ Reset</button><button class="calib-btn toggle" type="button">🎯 Kalibrasi</button>';
+  const hint=document.createElement("div"); hint.className="calib-hint"; hint.textContent="Geser titik ke bagian tubuh, lalu ✅ Selesai";
+  callaway.appendChild(ctrl); callaway.appendChild(hint);
+  const toggleBtn=ctrl.querySelector(".toggle"), resetBtn=ctrl.querySelector(".reset");
+  labels.forEach(function(lb,i){
+    const acc=getComputedStyle(lb).getPropertyValue("--accent").trim()||"#8b5cf6";
+    const h=document.createElement("div"); h.className="apd-handle"; h.dataset.i=i;
+    h.style.setProperty("--accent",acc); h.style.left=anchors[i].x+"%"; h.style.top=anchors[i].y+"%";
+    callaway.appendChild(h); handles.push(h);
+  });
+  function renderPaths(){
+    let html="";
+    for(let i=0;i<anchors.length;i++){ html+='<path pathLength="1" d="'+pathD(nodes[i]||{x:50,y:50},anchors[i])+'"/>'; }
+    svg.setAttribute("viewBox","0 0 100 100"); svg.setAttribute("preserveAspectRatio","none"); svg.innerHTML=html;
+    paths=Array.prototype.slice.call(svg.querySelectorAll("path"));
+  }
+  function refreshPath(i){ if(paths[i]) paths[i].setAttribute("d",pathD(nodes[i],anchors[i])); }
+  function moveAnchor(i,x,y){ anchors[i]={x:x,y:y}; if(handles[i]){handles[i].style.left=x+"%";handles[i].style.top=y+"%";} refreshPath(i); }
+  handles.forEach(function(h,i){
+    h.addEventListener("pointerdown",function(e){ if(!callaway.classList.contains("calibrating"))return; e.preventDefault(); e.stopPropagation(); dragging=i; callaway.classList.add("dragging"); try{h.setPointerCapture(e.pointerId);}catch(_){} });
+    h.addEventListener("pointermove",function(e){ if(dragging!==i)return; const cr=callaway.getBoundingClientRect(); const x=clamp((e.clientX-cr.left)/cr.width*100,0,100); const y=clamp((e.clientY-cr.top)/cr.height*100,0,100); moveAnchor(i,x,y); });
+    const end=function(e){ if(dragging!==i)return; dragging=-1; callaway.classList.remove("dragging"); try{h.releasePointerCapture(e.pointerId);}catch(_){} saveAnchors(id,anchors); };
+    h.addEventListener("pointerup",end); h.addEventListener("pointercancel",end);
+  });
+  toggleBtn.addEventListener("click",function(){ const on=callaway.classList.toggle("calibrating"); toggleBtn.textContent=on?"✅ Selesai":"🎯 Kalibrasi"; if(!on) saveAnchors(id,anchors); });
+  resetBtn.addEventListener("click",function(){ anchors=DEFAULT_ANCHORS.map(function(p){return {x:p.x,y:p.y};}); nodes=computeNodes(callaway); handles.forEach(function(h,i){h.style.left=anchors[i].x+"%";h.style.top=anchors[i].y+"%";}); renderPaths(); saveAnchors(id,anchors); });
+  renderPaths();
+  function recalc(){ nodes=computeNodes(callaway); for(let i=0;i<anchors.length;i++) refreshPath(i); }
+  window.addEventListener("resize",recalc); callaway._recalc=recalc;
+}
+document.querySelectorAll(".apd-callaway").forEach(initCallaway);
+requestAnimationFrame(function(){ document.querySelectorAll(".apd-callaway").forEach(function(c){ if(c._recalc) c._recalc(); }); });
+window.addEventListener("load",function(){ document.querySelectorAll(".apd-callaway").forEach(function(c){ if(c._recalc) c._recalc(); }); });
+
+/* ---------- NAVIGASI + PARALLAX ---------- */
+const stage=document.getElementById("stage"),canvas=document.getElementById("canvas"),slides=Array.from(document.querySelectorAll(".slide")),bar=document.getElementById("bar"),counter=document.getElementById("counter"),btnPrev=document.getElementById("btnPrev"),btnNext=document.getElementById("btnNext"),btnFull=document.getElementById("btnFull"),toast=document.getElementById("toast"),dotsWrap=document.getElementById("dots");
+let current=0;
+function fitCanvas(){canvas.style.transform="scale("+(stage.clientWidth/1600)+")";} fitCanvas(); window.addEventListener("resize",fitCanvas);
+let targetX=0,targetY=0,currentX=0,currentY=0,velX=0,velY=0; const reduceMotion=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+stage.addEventListener("pointermove",function(e){const r=stage.getBoundingClientRect();targetX=((e.clientX-r.left)/r.width-0.5)*2;targetY=((e.clientY-r.top)/r.height-0.5)*2;});
+stage.addEventListener("pointerleave",function(){targetX=0;targetY=0;});
+const startTime=performance.now();
+function cinematicLoop(now){const t=now-startTime,autoX=Math.sin(t/3200)*0.48+Math.sin(t/1900)*0.14,autoY=Math.cos(t/3800)*0.36+Math.sin(t/2300)*0.10,blendX=clamp(targetX+autoX,-1.25,1.25),blendY=clamp(targetY+autoY,-1.25,1.25);velX+=(blendX-currentX)*0.038;velY+=(blendY-currentY)*0.038;velX*=0.88;velY*=0.88;currentX+=velX;currentY+=velY;canvas.style.setProperty("--mx",currentX.toFixed(4));canvas.style.setProperty("--my",currentY.toFixed(4));requestAnimationFrame(cinematicLoop);} if(!reduceMotion)requestAnimationFrame(cinematicLoop);
+slides.forEach(function(_,i){const b=document.createElement("button");b.className="dot-btn"+(i===0?" active":"");b.setAttribute("aria-label","Ke slide "+(i+1));b.addEventListener("click",function(){goTo(i);});dotsWrap.appendChild(b);});
+function showToast(m){toast.textContent=m;toast.classList.add("show");clearTimeout(toast._t);toast._t=setTimeout(function(){toast.classList.remove("show");},3800);}
+function animateCounters(slide){slide.querySelectorAll("[data-count]").forEach(function(el){if(el.dataset.animating==="1")return;const target=Number(el.dataset.count||0),suffix=el.dataset.suffix||"",start=performance.now();el.dataset.animating="1";(function tick(now){const p=Math.min(1,(now-start)/1200),e=1-Math.pow(1-p,3);el.textContent=Math.round(target*e)+suffix;if(p<1)requestAnimationFrame(tick);else el.dataset.animating="0";})(performance.now());});}
+function goTo(index){index=Math.max(0,Math.min(slides.length-1,index));slides.forEach(function(slide,i){const dir=i<index?-1:1;slide.style.setProperty("--tx",(dir*56)+"px");slide.classList.toggle("active",i===index);slide.setAttribute("aria-hidden",i===index?"false":"true");});current=index;bar.style.width=(index/(slides.length-1))*100+"%";counter.textContent=(index+1)+" / "+slides.length;document.querySelectorAll(".dot-btn").forEach(function(d,i){d.classList.toggle("active",i===index);});animateCounters(slides[index]);if(index===0&&typeof playIntro==="function")playIntro();}
+btnPrev.addEventListener("click",function(){goTo(current-1);});btnNext.addEventListener("click",function(){goTo(current+1);});
+window.addEventListener("keydown",function(e){const inter=e.target.closest("button,input,textarea,select");if(inter&&(e.key==="Enter"||e.key===" "))return;if(["ArrowRight","PageDown"," ","Enter"].indexOf(e.key)>-1){e.preventDefault();goTo(current+1);}if(["ArrowLeft","PageUp","Backspace"].indexOf(e.key)>-1){e.preventDefault();goTo(current-1);}if(e.key==="Home")goTo(0);if(e.key==="End")goTo(slides.length-1);});
+let startX=null;stage.addEventListener("touchstart",function(e){startX=e.touches[0].clientX;},{passive:true});stage.addEventListener("touchend",function(e){if(startX===null)return;const dx=e.changedTouches[0].clientX-startX;if(Math.abs(dx)>60)goTo(current+(dx<0?1:-1));startX=null;});
+btnFull.addEventListener("click",async function(){try{if(!document.fullscreenElement)await stage.requestFullscreen();else await document.exitFullscreen();setTimeout(fitCanvas,120);}catch(err){showToast("Fullscreen tidak didukung di browser ini.");}});
+
+/* ---------- MINI POLL ---------- */
+const choices=document.querySelectorAll(".choice"),introFeedback=document.getElementById("introFeedback");
+choices.forEach(function(btn){btn.addEventListener("click",function(){const isCorrect=btn.dataset.correct==="true",correctBtn=Array.from(choices).find(function(c){return c.dataset.correct==="true";});choices.forEach(function(c){c.disabled=true;c.classList.remove("correct","wrong");});if(isCorrect){btn.classList.add("correct");introFeedback.className="feedback show good";introFeedback.innerHTML="<strong>Tepat!</strong> Spuit bekas pakai terkontaminasi darah harus masuk penanganan benda tajam/infeksius sesuai SOP.";}else{btn.classList.add("wrong");if(correctBtn)correctBtn.classList.add("correct");introFeedback.className="feedback show bad";introFeedback.innerHTML="<strong>Hampir.</strong> Jawaban paling tepat adalah spuit bekas pakai terkontaminasi darah.";}showResultImage(isCorrect);});});
+document.getElementById("startBtn").addEventListener("click",function(){goTo(2);});
+document.getElementById("askBtn").addEventListener("click",function(){showToast("Coba lempar ke audiens: “Kapan terakhir kali kita melihat tumpahan atau pemilahan yang keliru di RS ini?”");});
+
+/* ---------- CHECKLIST RING ---------- */
+const checks=document.querySelectorAll("#auditChecklist input"),ringFg=document.getElementById("ringFg"),ringText=document.getElementById("ringText"),circumference=2*Math.PI*82;
+ringFg.style.strokeDasharray=circumference;ringFg.style.strokeDashoffset=circumference;
+function updateAudit(){const total=checks.length,done=Array.from(checks).filter(function(c){return c.checked;}).length,pct=Math.round(done/total*100);ringFg.style.strokeDashoffset=circumference*(1-pct/100);ringText.textContent=pct+"%";}
+checks.forEach(function(c){c.addEventListener("change",updateAudit);});updateAudit();
+
+/* ---------- CONFETTI ---------- */
+function celebrate(){const colors=["#8b5cf6","#ec4899","#f59e0b","#34d399","#ffffff"];for(let i=0;i<90;i++){const p=document.createElement("div");p.className="confetti";p.style.left=Math.random()*1600+"px";p.style.background=colors[i%colors.length];p.style.animationDuration=(2+Math.random()*2)+"s";p.style.animationDelay=(Math.random()*0.4)+"s";p.style.transform="rotate("+Math.random()*360+"deg)";canvas.appendChild(p);setTimeout(function(){p.remove();},4500);}}
+document.getElementById("commitBtn").addEventListener("click",function(){celebrate();showToast("Mantap! Komitmen kecil hari ini bisa mencegah insiden besar besok.");});
+document.getElementById("qaBtn").addEventListener("click",function(){showToast("Silakan berbagi: bagian mana dari alur limbah yang paling sering terlewat di unit Anda?");});
+
+/* ---------- VIDEO HINT ---------- */
+document.querySelectorAll("video").forEach(function(v){const tile=v.closest(".video-tile");if(!tile)return;v.addEventListener("play",function(){tile.classList.add("playing");});v.addEventListener("pause",function(){tile.classList.remove("playing");});v.addEventListener("ended",function(){tile.classList.remove("playing");});});
+
+/* ---------- SLIDE INTRO: replay + timecode + binding ---------- */
+let introStart=performance.now();
+function playIntro(){
+  const s=document.querySelector(".slide-intro"); if(!s)return;
+  s.classList.remove("is-playing"); void s.offsetWidth; s.classList.add("is-playing");
+  introStart=performance.now();
+}
+function fmtTC(ms){const t=ms/1000,m=Math.floor(t/60),sec=Math.floor(t%60),ff=Math.floor((t*24)%24),p=n=>String(n).padStart(2,"0");return p(m)+":"+p(sec)+":"+p(ff);}
+setInterval(function(){const el=document.querySelector(".timecode");if(el)el.textContent=fmtTC(performance.now()-introStart);},70);
+(function bindIntro(){
+  const a=document.getElementById("introStart"),b=document.getElementById("introAgenda"),c=document.getElementById("introSkip");
+  if(a)a.addEventListener("click",function(){goTo(1);});
+  if(b)b.addEventListener("click",function(){goTo(2);});
+  if(c)c.addEventListener("click",function(){goTo(1);});
+})();
+
+goTo(0);
+</script>
+</body>
+</html>
